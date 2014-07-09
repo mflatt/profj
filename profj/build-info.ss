@@ -233,7 +233,7 @@
               (let* ([dir (find-directory path err)]
                      [class-list (get-class-list dir)]
                      [package-contents null])
-                (printf "~a~n~a~n" dir class-list)
+                ;(printf "~a~n~a~n" dir class-list)
                 (for-each (check-dup-import
                            (lambda (class)
                              (import-class class path dir file type-recs level (import-src imp) #t)
