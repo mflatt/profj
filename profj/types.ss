@@ -866,7 +866,7 @@
                      (or (equal? "ignore" (list-ref input 10))
                          (and (equal? (version) (list-ref input 10))
                               (>= (file-or-directory-modify-seconds (build-path filename))
-                                  (file-or-directory-modify-seconds (build-path (collection-path "mzlib") "contract.rkt")))))
+                                  (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib")))))
                      (make-class-record (list-ref input 1)
                                         (list-ref input 2)
                                         (symbol=? 'class (car input))
@@ -908,7 +908,7 @@
                    (make-ref-type (car input) (cdr input)))))))
       #;(printf "~a ~a ~n" filename 
               (>= (file-or-directory-modify-seconds (build-path filename))
-                  (file-or-directory-modify-seconds (build-path (collection-path "mzlib") "contract.rkt"))))
+                  (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib"))))
       (parse-class/iface (call-with-input-file filename read))))
   
   ;; write-record: class-record port->

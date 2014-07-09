@@ -51,7 +51,7 @@
                       (> (file-or-directory-modify-seconds compiled-path)
                          (file-or-directory-modify-seconds (build-path name)))
                       (> (file-or-directory-modify-seconds compiled-path)
-                         (file-or-directory-modify-seconds (build-path (collection-path "mzlib") "contract.rkt"))))
+                         (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib"))))
                (call-with-input-file name (lambda (port) (compile-to-file port name level)))))))
         ((eq? dest 'file)
          (compile-to-file port loc level))
@@ -65,7 +65,7 @@
                               (> (file-or-directory-modify-seconds compiled-path)
                                  (file-or-directory-modify-seconds (build-path name)))
                               (> (file-or-directory-modify-seconds compiled-path)
-                                 (file-or-directory-modify-seconds (build-path (collection-path "mzlib") "contract.rkt"))))
+                                 (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib"))))
                          (and (file-exists? type-path)
                               (read-record type-path)))
                (call-with-input-file 

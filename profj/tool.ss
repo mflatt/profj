@@ -1046,10 +1046,10 @@
           
           (define/public (on-execute settings run-in-user-thread)
             (dynamic-require 'profj/libs/java/lang/Object #f)
-            (let ([obj-path ((current-module-name-resolver) 'profj/libs/java/lang/Object #f #f)]
-                  [string-path ((current-module-name-resolver) 'profj/libs/java/lang/String #f #f)]
-                  [class-path ((current-module-name-resolver) 'scheme/class #f #f)]
-                  [mred-path ((current-module-name-resolver) 'mred #f #f)]
+            (let ([obj-path ((current-module-name-resolver) 'profj/libs/java/lang/Object #f #f #t)]
+                  [string-path ((current-module-name-resolver) 'profj/libs/java/lang/String #f #f #t)]
+                  [class-path ((current-module-name-resolver) 'scheme/class #f #f #t)]
+                  [mred-path ((current-module-name-resolver) 'mred #f #f #t)]
                   [n (current-namespace)]
                   [e (current-eventspace)])
               (test-ext? (profj-settings-allow-check? settings))
