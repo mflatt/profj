@@ -4,7 +4,7 @@
            "name-utils.scm"
            "graph-scc.ss"
            "parameters.ss"
-           scheme/class
+           racket/class
            mzlib/etc
            (prefix-in int-set: mzlib/integer-set)
            )
@@ -314,7 +314,7 @@
            (reqs (filter-reqs group-reqs defs type-recs)))
       (values (if (> (length translated-defs) 1)
                   (cons (make-syntax #f `(module ,(module-name) scheme/base
-                                           (require scheme/class
+                                           (require racket/class
                                                     (prefix-in javaRuntime: profj/libs/java/runtime)
                                                     (prefix-in c: scheme/contract)
                                                     ,@(remove-dup-syntax (translate-require reqs type-recs)))
@@ -326,7 +326,7 @@
                                                                                  (symbol->string (module-name)) 
                                                                                  ""))
                                         scheme/base
-                                        (require scheme/class
+                                        (require racket/class
                                                  (prefix-in javaRuntime: profj/libs/java/runtime)
                                                  (prefix-in c: scheme/contract)
                                                  ,@(remove-dup-syntax
@@ -1134,7 +1134,7 @@
   (define (generate-stm-class class parent methods fields)
     (create-syntax #f
                    `(begin
-                      (require scheme/private/class-internal)
+                      (require racket/private/class-internal)
                       (provide ,(string->symbol (string-append class "-stm")))
                       (define ,(string->symbol (string-append class "-stm"))
                         (class* object% (stm-wrapper)
