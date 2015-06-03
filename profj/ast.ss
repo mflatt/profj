@@ -6,11 +6,11 @@
 	          [(_ (name inherit) fields)
 		   (begin
 		     (provide (struct-out name))
-                     (define-struct (name inherit) fields #:mutable #:transparent))]
+                     (define-struct (name inherit) fields #:mutable #:prefab))]
                   [(_ name fields)
                    (begin
                      (provide (struct-out name))
-                     (define-struct name fields #:mutable #:transparent))]))
+                     (define-struct name fields #:mutable #:prefab))]))
 
   
   ;(make-src int int int int loc)

@@ -7,7 +7,7 @@
 
   (provide compile-java compile-interactions compile-files compile-ast compile-interactions-ast
            compilation-unit-code compilation-unit-contains set-compilation-unit-code!
-           read-record write-record
+           read-record write-record record->list
            set-syntax-location create-type-record
            compile-to-ast)
   

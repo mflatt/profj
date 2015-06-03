@@ -68,10 +68,12 @@
    ;; 3.6
    (FF #\014)
    (TAB #\011)
+   (NBSP #\uA0)
    (WhiteSpace (re:or #\space 
                       TAB
                       FF
-                      LineTerminator))
+                      LineTerminator
+                      NBSP))
    
    ;; 3.7 (Had to transform CommentTail and CommentTailStar into one RE)
    ;;     (DocumentationComment only appears in version 1 of the spec)

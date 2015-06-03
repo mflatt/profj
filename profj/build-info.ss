@@ -32,7 +32,11 @@
     (list (path-only (collection-path "profj"))))
 
   ;build-require-syntax: string (list string) dir bool bool-> (list syntax)
-  (define (build-require-syntax name path dir local? scheme?)
+  (define (build-require-syntax name path dir local? scheme?
+                                #:submod-of [submod-of (and local?
+                                                            (not (to-file))
+                                                            (to-submodules)
+                                                            "..")])
     (let* ((syn (lambda (acc) (datum->syntax #f acc #f)))
            (profj-lib? (ormap (lambda (p) (same-base-dir? dir p))
                               (map (lambda (p) (build-path p "profj" "libs"))
@@ -48,7 +52,9 @@
                        (htdch-lib? 
                         `(lib ,name "profj" "htdch" ,@(if scheme? (cdddr path) path)))
                        (scheme-lib? `(lib ,name ,@(cddr path)))
-                       ((and local? (not (to-file))) `(quote ,name))
+                       ((and local? (not (to-file))) (if submod-of
+                                                         `(submod ,submod-of ,name)
+                                                         `(quote ,name)))
                        (else `(file ,(path->string (build-path dir name)))))))
            (make-name (lambda ()
                         (let ((n (if scheme? (java-name->scheme name) name)))
@@ -63,8 +69,8 @@
                               ,(syn (access (make-name)))))
                 (syn `(prefix-in ,(string->symbol (string-append name "-")) ,(syn (access (make-name))))))
           (list (syn `(prefix-in ,(string->symbol (apply string-append
-                                                      (map (lambda (s) (string-append s ".")) path)))
-                              ,(syn (access (make-name)))))
+                                                         (map (lambda (s) (string-append s ".")) path)))
+                       ,(syn (access (make-name)))))
                 (syn (access (make-name)))))))
   
   ;-------------------------------------------------------------------------------
@@ -269,7 +275,7 @@
          =>
          (lambda (record)
            (send type-recs add-class-record record)
-           (send type-recs add-require-syntax class-name (build-require-syntax class path dir #f #f))
+           (send type-recs add-require-syntax class-name (build-require-syntax class path dir #f #f #:submod-of #f))
            (map (lambda (ancestor)
                   (let* ([ancestor-name (car ancestor)]
                          [ancestor-path (if (null? (cdr ancestor))
@@ -284,7 +290,13 @@
            ))
         ((and (dynamic?) (dir-path-scheme? in-dir) (check-scheme-file-exists? class dir))
          (send type-recs add-to-records class-name (make-scheme-record class (cdr path) dir null))
-         (send type-recs add-require-syntax class-name (build-require-syntax class path dir #f #t)))
+         (send type-recs add-require-syntax class-name (build-require-syntax class path dir #f #t #:submod-of #f)))
+        ((check-submodule-exists class dir)
+         => (lambda (record-datum+filename)
+              (send type-recs add-class-record (parse-record (car record-datum+filename)))
+              (send type-recs add-require-syntax class-name
+                    (build-require-syntax (car class-name) null dir #t #f
+                                #:submod-of (cadr record-datum+filename)))))
         (class-exists?
          (send type-recs add-to-records 
                class-name
@@ -305,7 +317,8 @@
                              #;(send type-recs set-compilation-location old-type-cloc)
                              #;(send type-recs set-location! old-type-loc))
                      ))))
-         (send type-recs add-require-syntax class-name (build-require-syntax class path dir #t #f)))
+         (parameterize ([to-file #t])
+           (send type-recs add-require-syntax class-name (build-require-syntax class path dir #t #f #:submod-of #f))))
         (else 
          (file-error 'file (cons class path) caller-src level)))
       (when add-to-env (send type-recs add-to-env class path loc))
@@ -346,6 +359,16 @@
   (define (check-scheme-file-exists? name path)
     (or (file-exists? (build-path path (string-append (java-name->scheme name) ".ss")))
         (file-exists? (build-path path (string-append (java-name->scheme name) ".scm")))))
+  
+  (define (check-submodule-exists name path)
+    (define file-path (build-path path (string-append (java-name->scheme name) ".rkt")))
+    (and (file-exists? file-path)
+         (let ([jinfo-table (dynamic-require `(submod ,file-path jinfo) 'jinfos (lambda () #f))])
+           (and jinfo-table
+                (hash? jinfo-table)
+                (let ([jinfo (hash-ref jinfo-table (list name) #f)])
+                  (and jinfo
+                       (list jinfo file-path)))))))
   
   (define (create-scheme-type-rec mod-name req-path) 'scheme-types)
     

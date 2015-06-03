@@ -19,6 +19,7 @@
   
   ;Stores a boolean indicating if compilation is directed at a file
   (define to-file (make-parameter #f))
+  (define to-submodules (make-parameter #f))
   
   ;Stores an integer offset for interactions offset
   (define interactions-offset (make-parameter 0))

@@ -859,14 +859,22 @@
   
   ;; read-record: path -> (U class-record #f)
   (define (read-record filename)
+    #;(printf "~a ~a ~n" filename 
+            (>= (file-or-directory-modify-seconds (build-path filename))
+                (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib"))))
+    (parse-record (call-with-input-file filename read)
+                  #:up-to-date?
+                  (>= (file-or-directory-modify-seconds (build-path filename))
+                      (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib")))))
+  
+  (define (parse-record datum #:up-to-date? [up-to-date? #t])
     (letrec ((parse-class/iface
               (lambda (input)
                 (and (= (length input) type-length)
                      (equal? type-version (list-ref input 9))
                      (or (equal? "ignore" (list-ref input 10))
                          (and (equal? (version) (list-ref input 10))
-                              (>= (file-or-directory-modify-seconds (build-path filename))
-                                  (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib")))))
+                              up-to-date?))
                      (make-class-record (list-ref input 1)
                                         (list-ref input 2)
                                         (symbol=? 'class (car input))
@@ -906,13 +914,13 @@
                    (make-array-type (parse-type (cadr input)) (car input)))
                   (else
                    (make-ref-type (car input) (cdr input)))))))
-      #;(printf "~a ~a ~n" filename 
-              (>= (file-or-directory-modify-seconds (build-path filename))
-                  (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib"))))
-      (parse-class/iface (call-with-input-file filename read))))
+      (parse-class/iface datum)))
   
   ;; write-record: class-record port->
   (define (write-record rec port)
+    (pretty-print (record->list rec) port))
+  
+  (define (record->list r)
     (letrec ((record->list
               (lambda (r)
                 (list
@@ -969,5 +977,5 @@
                   ((ref-type? t) (cons (ref-type-class/iface t) (ref-type-path t)))
                   ((array-type? t)
                    (list (array-type-dim t) (type->list (array-type-type t))))))))
-      (pretty-print (record->list rec) port)))
+      (record->list r)))
   )
