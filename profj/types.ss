@@ -146,7 +146,7 @@
   (define (widening-ref-conversion to from type-recs)
     (cond
       ((and (symbol? from) (symbol=? from 'null))
-       (or (ref-type? to) (symbol=? 'string to) (array-type? to)))
+       (or (ref-type? to) (eq? 'string to) (array-type? to)))
       ((and (symbol? from) (symbol=? from 'string))
        (or (type=? to object-type) 
            (type=? to serializable-type) 
