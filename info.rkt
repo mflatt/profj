@@ -14,4 +14,5 @@
                "srfi-lite-lib"
                "string-constants-lib"))
 
-(define build-deps '("scribble-lib"))
+(define build-deps '("scribble-lib"
+                     "racket-doc"))
