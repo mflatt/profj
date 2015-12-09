@@ -1,6 +1,6 @@
 #lang racket/base
-
 (require (for-syntax racket/base))
+
 (provide generate-reader)
 
 (define-syntax (generate-reader stx)
@@ -33,7 +33,8 @@
                   "parser.rkt"
                   (only-in "parsers/lexer.rkt" get-syntax-token)
                   "compile.rkt"
-                  "parameters.rkt")
+                  "parameters.rkt"
+                  syntax/strip-context)
          
          (define (read-profj-syntax name in)
            (parameterize ([to-submodules #t]
@@ -45,17 +46,18 @@
              (append
               (apply append (map compilation-unit-code cs))
               (list
-               #`(module jinfo racket/base
-                   (provide jinfos)
-                   (define jinfos
-                     '#,(for/hash ([c (in-list cs)])
-                          (define cname (compilation-unit-contains c))
-                          (values
-                           cname
-                           (record->list (send type-recs get-class-record 
-                                               cname
-                                               #f
-                                               (lambda ()
-                                                 (error 'profj "error converting type info")))))))))))))]
+               (strip-context
+                #`(module jinfo racket/base
+                    (provide jinfos)
+                    (define jinfos
+                      '#,(for/hash ([c (in-list cs)])
+                           (define cname (compilation-unit-contains c))
+                           (values
+                            cname
+                            (record->list (send type-recs get-class-record 
+                                                cname
+                                                #f
+                                                (lambda ()
+                                                  (error 'profj "error converting type info"))))))))))))))]
     [(_ lang-module level)
      #'(generate-reader lang-module level #:dynamic? #f)]))
