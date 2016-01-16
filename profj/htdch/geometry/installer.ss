@@ -1,4 +1,4 @@
-(module installer mzscheme
+(module installer racket/base
   (require profj/compile)
   (provide installer)
   

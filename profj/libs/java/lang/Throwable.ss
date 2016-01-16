@@ -1,4 +1,4 @@
-(module Throwable scheme/base
+(module Throwable racket/base
   (require "Object-composite.ss")
   (provide Throwable (struct-out java:exception)
            exception-is-a? handle-exception create-java-exception)

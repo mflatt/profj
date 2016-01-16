@@ -1,14 +1,14 @@
-(module installer mzscheme
+(module installer racket/base
   (require profj/compile)
   (provide installer)
 
   (define (installer plthome)
-    (let ([java.util (build-path
-		      (collection-path "profj" "libs" "java" "util"))])
+    (let ([java.util
+           (build-path
+            (collection-path "profj" "libs" "java" "util"))])
       (let ([javac
-	     (lambda (file)
-	       (parameterize ([current-load-relative-directory
-			       java.util])
+             (lambda (file)
+	       (parameterize ([current-load-relative-directory java.util])
 		 (compile-java 'file
 			       'file
 			       'full
@@ -25,5 +25,4 @@
         (javac "ConcurrentModificationException.java")
         (javac "NoSuchElementException.java")
         (javac "AbstractList.java")
-        (javac "AbstractSequentialList.java")
-        ))))
+        (javac "AbstractSequentialList.java")))))

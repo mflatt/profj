@@ -1,4 +1,4 @@
-(module ArithmeticException mzscheme
+(module ArithmeticException racket/base
   (require "Object-composite.ss")
   (provide
    ArithmeticException

@@ -1,7 +1,7 @@
-(module Object-composite scheme/base
+(module Object-composite racket/base
   
-  (require scheme/class
-           (prefix-in c: scheme/contract)
+  (require racket/class
+           (prefix-in c: racket/contract)
            errortrace/errortrace-lib
            
            profj/libs/java/lang/Comparable

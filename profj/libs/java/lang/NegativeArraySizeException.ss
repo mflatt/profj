@@ -1,4 +1,4 @@
-(module NegativeArraySizeException mzscheme
+(module NegativeArraySizeException racket/base
   (require "Object-composite.ss")
   (provide
    NegativeArraySizeException

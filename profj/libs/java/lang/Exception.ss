@@ -1,4 +1,4 @@
-(module Exception mzscheme
+(module Exception racket/base
   (require "Object-composite.ss")
   (provide
    Exception

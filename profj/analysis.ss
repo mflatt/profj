@@ -1,8 +1,9 @@
-(module analysis scheme/base
+(module analysis racket/base
   
   (require "ast.ss"
            "types.ss"
-           scheme/class)
+           racket/list
+           racket/class)
   
   (define self (make-parameter #f))
   (define types (make-parameter #f))

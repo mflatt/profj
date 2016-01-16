@@ -1,4 +1,4 @@
-(module intermediate-tests mzscheme
+(module intermediate-tests racket/base
   (require "profj-testing.ss")
   
   (prepare-for-tests "Intermediate")

@@ -1,10 +1,10 @@
-(module general-parsing scheme/base
+(module general-parsing racket/base
   
   (require 
-   (for-syntax scheme/base)
+   (for-syntax racket/base)
    (except-in parser-tools/lex input-port)
-   mzlib/string
-   (prefix-in class: scheme/class))
+   racket/string
+   (prefix-in class: racket/class))
   (require "../ast.ss" "../parameters.ss" "lexer.ss")
   
   (provide (all-defined-out))
@@ -256,8 +256,7 @@
   ;close-to-keyword? token (opt symbol )-> bool
   (define (close-to-keyword? t . args)
     (if (id-token? t)
-        (let ((s (string-copy (token-value t))))
-          (string-lowercase! s)
+        (let ((s (string-downcase (token-value t))))
           (if (null? args)
               (or (java-keyword? (string->symbol s))
                   (member s all-words))
@@ -266,8 +265,7 @@
         #f))
   
   (define (miscapitalized? t key)
-    (let ((s (string-copy (token-value t))))
-      (string-lowercase! s)
+    (let ((s (string-downcase (token-value t))))
       (equal? s key)))
   
   (define misspelled-list '((import "mport" "iport" "imort" "imprt" "impot" "impor" "improt" "impourt")

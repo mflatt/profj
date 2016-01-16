@@ -1,10 +1,9 @@
-(module parse-error mzscheme
+(module parse-error racket/base
   
   (require "lexer.ss" "general-parsing.ss"
            "../parameters.ss"
-           mzlib/etc
            syntax/readerr
-           (all-except parser-tools/lex input-port))
+           (except-in parser-tools/lex input-port))
   
   (provide
    find-beginner-error find-beginner-error-interactions find-beginner-error-expression find-beginner-error-type           
@@ -178,7 +177,7 @@
   
   ;output-format: token bool -> string
   (define format-out
-    (opt-lambda (tok [full? #t])
+    (lambda (tok [full? #t])
       (cond
         ((separator? tok) 
          (case (get-token-name tok)

@@ -1,6 +1,6 @@
-(module build-info scheme/base
+(module build-info racket/base
   
-  (require scheme/class scheme/path 
+  (require racket/class racket/path 
            "ast.ss" "types.ss" "error-messaging.ss" "parameters.ss" 
            "restrictions.ss" "parser.ss" "profj-pref.ss")
 
@@ -420,7 +420,7 @@
             (make-dir-path (dir-path-path dir) #t)))
          ((and (equal? (cadr path) "lib") (not (null? (cddr path))))
           (make-dir-path (apply collection-path (cddr path)) #t))
-         (else (make-dir-path (build-path "mzlib") #t))))
+         (else (make-dir-path (build-path "racket") #t))))
       (else
        (when (null? (classpath)) (classpath (get-classpath)))
        (let-values (((search)
@@ -602,7 +602,7 @@
                  
                  (when (eq? level 'full)
                    (when (memq 'final (class-record-modifiers super-record))
-                     (extension-error 'final (header-id info) super (id-src super))))
+                     (extension-error 'final (header-id info) super (id-src (name-id super)))))
                    
                  (unless (class-record-class? super-record)
                    (extension-error 'class-iface (header-id info) super (name-src super)))

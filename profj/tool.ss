@@ -1,11 +1,11 @@
-(module tool scheme/base
-  (require drscheme/tool scheme/contract
+(module tool racket/base
+  (require drracket/tool racket/contract
            mred framework
            errortrace/errortrace-lib
-           (prefix-in u: scheme/unit)
-           scheme/file
-           scheme/runtime-path
-           scheme/class
+           (prefix-in u: racket/unit)
+           racket/file
+           racket/runtime-path
+           racket/class
 	   string-constants)
   (require "parameters.ss" 
            "parsers/lexer.ss"
@@ -15,7 +15,7 @@
            (except-in "ast.ss" for)
            "display-java.ss")
 
-  (require (for-syntax scheme/base))
+  (require (for-syntax racket/base))
   
   (define drs-ns (current-namespace))
   (define-syntax (dr stx)
@@ -1048,7 +1048,7 @@
             (dynamic-require 'profj/libs/java/lang/Object #f)
             (let ([obj-path ((current-module-name-resolver) 'profj/libs/java/lang/Object #f #f #t)]
                   [string-path ((current-module-name-resolver) 'profj/libs/java/lang/String #f #f #t)]
-                  [class-path ((current-module-name-resolver) 'scheme/class #f #f #t)]
+                  [class-path ((current-module-name-resolver) 'racket/class #f #f #t)]
                   [mred-path ((current-module-name-resolver) 'mred #f #f #t)]
                   [n (current-namespace)]
                   [e (current-eventspace)])
@@ -1146,7 +1146,7 @@
                               (syntax-as-top (compile-interactions-ast exp (syntax loc) level execute-types #t)))))
                           (_ (old-current-eval exp))))))
                    (with-handlers ([void (lambda (x)  (printf "~a~n" (exn-message x)))])
-                     (namespace-require 'mzscheme)
+                     (namespace-require 'racket/base)
                      (namespace-attach-module n obj-path)
                      (namespace-attach-module n string-path)
                      (namespace-attach-module n class-path)
@@ -1155,8 +1155,8 @@
                      (namespace-require string-path)
                      (namespace-require class-path)
                      (namespace-require mred-path)
-                     (namespace-require '(prefix javaRuntime: profj/libs/java/runtime))
-                     (namespace-require '(prefix c: mzlib/contract))
+                     (namespace-require '(prefix-in javaRuntime: profj/libs/java/runtime))
+                     (namespace-require '(prefix-in c: racket/contract))
                      ))))))
           
           #;(define/public (render-value value settings port); port-write)

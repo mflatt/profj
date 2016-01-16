@@ -1,11 +1,11 @@
 #cs
-(module Double-native-methods mzscheme
+(module Double-native-methods racket/base
   
-  (require mzlib/class)
+  (require racket/class)
   (require "Throwable.ss" "String.ss"
            #;"NumberFormatException.ss" "NullPointerException.ss" "RuntimeException.ss")
   
-  (provide (all-defined))
+  (provide (all-defined-out))
   
   (define (Double-parseDoubleHelper-java.lang.String-native s)
     #;(when (null? s)

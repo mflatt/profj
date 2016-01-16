@@ -1,6 +1,6 @@
-(module beginner-tests mzscheme
+(module beginner-tests racket/base
   (require "profj-testing.ss")
-  (require mzlib/class
+  (require racket/class
            profj/libs/java/lang/Object
            profj/libs/java/lang/String)
   

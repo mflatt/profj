@@ -1,5 +1,5 @@
-(module mz mzscheme
-  (provide (all-defined))
+(module mz racket/base
+  (provide (all-defined-out))
   
   (define downcase char-downcase)
   (define lower-case? char-lower-case?)

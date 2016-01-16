@@ -1,4 +1,4 @@
-(module IndexOutOfBoundsException mzscheme
+(module IndexOutOfBoundsException racket/base
   (require "Object-composite.ss")
   (provide
    IndexOutOfBoundsException

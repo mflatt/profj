@@ -1,6 +1,6 @@
-(module parsers scheme/base
+(module parsers racket/base
   (require "parser-units.scm"
-           scheme/unit
+           racket/unit
            (only-in (lib "combinator-unit.ss" "combinator-parser") err^))
   
   (provide parse-beginner parse-intermediate parse-intermediate+access parse-advanced

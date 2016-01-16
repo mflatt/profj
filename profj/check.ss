@@ -1,4 +1,4 @@
-(module check scheme/base
+(module check racket/base
 
   (require "ast.ss"
            "types.ss"
@@ -7,8 +7,8 @@
            "restrictions.ss"
            "profj-pref.ss"
            "build-info.ss"
-           scheme/class scheme/path
-           (prefix-in srfi: srfi/1) mzlib/string)
+           racket/class racket/path
+           (prefix-in srfi: srfi/1) racket/string)
   (provide check-defs check-interactions-types)
   
   ;symbol-remove-last: symbol->symbol
@@ -2314,8 +2314,7 @@
     
   ;close-to-keyword: string -> bool
   (define (close-to-keyword? str)
-    (let ((s (string-copy str)))
-      (string-lowercase! s)
+    (let ((s (string-downcase str)))
       (member s `("if" "return"))))
   
   (define (error-file-exists? class type-recs) #f)

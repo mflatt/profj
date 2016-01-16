@@ -1,4 +1,4 @@
-(module RuntimeException mzscheme
+(module RuntimeException racket/base
   (require "Object-composite.ss")
   (provide
    RuntimeException

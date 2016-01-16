@@ -1,4 +1,4 @@
-(module restrictions scheme/base
+(module restrictions racket/base
   
   (provide is-field-restricted? is-method-restricted? forbidden-lang-class? is-import-restricted?)
   

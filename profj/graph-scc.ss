@@ -1,4 +1,4 @@
-(module graph-scc scheme/base
+(module graph-scc racket/base
   
   (provide get-scc)
   

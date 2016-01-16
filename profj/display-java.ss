@@ -1,6 +1,6 @@
-(module display-java scheme/base
+(module display-java racket/base
   
-  (require scheme/class
+  (require racket/class
            mred
            framework
            profj/libs/java/lang/Object

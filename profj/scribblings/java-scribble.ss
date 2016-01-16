@@ -1,4 +1,4 @@
-(module java-scribble scheme/base
+(module java-scribble racket/base
   
   (require scribble/struct scribble/basic scribble/scheme scribble/manual scribble/decode)
   

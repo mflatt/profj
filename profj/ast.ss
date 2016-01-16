@@ -1,4 +1,4 @@
-(module ast scheme/base
+(module ast racket/base
   
   ;Macro to allow structure definition and provision
   (define-syntax p-define-struct

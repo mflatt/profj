@@ -1,5 +1,5 @@
 
-(module parser scheme/base
+(module parser racket/base
   (require "parsers/full-parser.ss"
            "parsers/advanced-parser.ss"
            "parsers/intermediate-access-parser.ss"

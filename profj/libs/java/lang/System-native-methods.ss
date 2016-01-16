@@ -1,7 +1,7 @@
 #cs
-(module System-native-methods mzscheme
+(module System-native-methods racket/base
   
-  (provide (all-defined))
+  (provide (all-defined-out))
   
   (define (System-currentTimeMillis-native) (inexact->exact (floor (current-inexact-milliseconds))))
   

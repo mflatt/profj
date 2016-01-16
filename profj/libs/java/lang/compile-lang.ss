@@ -1,8 +1,9 @@
-(module compile-lang mzscheme
+(module compile-lang racket/base
   (require profj/compile
-           mzlib/list
-           mzlib/file
-           mzlib/pretty)
+           racket/list
+           racket/file
+           racket/path
+           racket/pretty)
  
   (provide compile-exceptions make-compilation-path)
   
@@ -81,15 +82,15 @@
     (for-each (lambda (name mod) 
                 (unless (file-exists? (string-append name ".ss"))
                   (call-with-output-file (string-append name ".ss")
-                    (lambda (port) (pretty-print (syntax-object->datum mod) port))
+                    (lambda (port) (pretty-print (syntax->datum mod) port))
                     'truncate/replace)))
               names
               (map (lambda (name provide)
-                     (datum->syntax-object #f
-                                           `(module ,(string->symbol name) mzscheme
-                                              (require "Object-composite.ss")
-                                              ,provide)
-                                           #f))
+                     (datum->syntax #f
+                                    `(module ,(string->symbol name) racket/base
+                                       (require "Object-composite.ss")
+                                       ,provide)
+                                    #f))
                    names (map get-provides bodies))))
  
   (define foo #t)
@@ -107,27 +108,28 @@
           (write-out-files (map car compiled-pieces) (map caddr compiled-pieces))
           (write-out-jinfos files (car (cdr compiled)))
           (current-directory cur-dir)
-          (datum->syntax-object so 
-                                `(begin ,@(filter (lambda (x) x)
-                                                  (map (lambda (r) (get-keepable-reqs r (syntax-object->datum so)))
+          (datum->syntax so 
+                         `(begin ,@(filter (lambda (x) x)
+                                           (map (lambda (r) (get-keepable-reqs r (syntax->datum so)))
                                                        (apply append (map cadr compiled-pieces))))
                                         ,@(map caddr compiled-pieces))
                                 #f)))))
   
   (define (reassemble-pieces stx)
     (syntax-case stx ()
-      ((module name mzscheme
+      ((module name racket/base
          (require class runtime real ...)
-         begin) (list (symbol->string (syntax-object->datum (syntax name)))
-                      (syntax->list #'(real ...)) 
-                      (syntax begin)))))
+         begin)
+       (list (symbol->string (syntax->datum (syntax name)))
+             (syntax->list #'(real ...)) 
+             (syntax begin)))))
   
   (define (get-keepable-reqs req names)
     (syntax-case req (lib file)
       ((lib name "profj" "libs" "java" "lang")
-       (and (not (member-name (syntax-object->datum (syntax name)) (cdr names))) req))
+       (and (not (member-name (syntax->datum (syntax name)) (cdr names))) req))
       ((file name)
-       (and (not (member-name (syntax-object->datum (syntax name)) (cdr names))) req))
+       (and (not (member-name (syntax->datum (syntax name)) (cdr names))) req))
       (name #f)))
   
   (define (member-name name names)

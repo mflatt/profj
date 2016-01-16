@@ -1,6 +1,7 @@
 #cs
-(module Math-native-methods mzscheme
-  (require mzlib/math)
+(module Math-native-methods racket/base
+  (require racket/math
+           (for-syntax racket/base))
 
   (define-syntax (define/provide stx)
     (syntax-case stx ()
@@ -14,7 +15,7 @@
 	   (define (id . formals) . rest)
 	   (provide id))]))
 
-  (define/provide (Math-getE-native) e)
+  (define/provide (Math-getE-native) (exp 1))
   (define/provide (Math-getPI-native) pi)
 
   (define/provide (Math-abs-double-native n) (abs n))

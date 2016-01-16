@@ -1,7 +1,7 @@
-(module runtime scheme/base
+(module runtime racket/base
   
-  (require scheme/class
-           scheme/list
+  (require racket/class
+           racket/list
 
            profj/libs/java/lang/Object
            profj/libs/java/lang/String

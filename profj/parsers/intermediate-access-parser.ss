@@ -1,4 +1,4 @@
-(module intermediate-access-parser scheme/base
+(module intermediate-access-parser racket/base
 
   (require "general-parsing.ss"
            "lexer.ss"

@@ -1,11 +1,11 @@
-(module types scheme/base
+(module types racket/base
 
   (require 
    (only-in srfi/1 lset-intersection)
-   mzlib/etc
-   mzlib/pretty
-   mzlib/list
-   scheme/class
+   racket/pretty
+   racket/list
+   racket/bool
+   racket/class
    "ast.ss")
   
   (provide (except-out (all-defined-out)
@@ -412,7 +412,7 @@
       ;; get-class-record: (U type (list string) 'string) (U (list string) #f) ( -> 'a) -> 
       ;;                                            (U class-record scheme-record procedure)
       (define/public get-class-record
-        (opt-lambda (ctype [container #f] [fail (lambda () null)])
+        (lambda (ctype [container #f] [fail (lambda () null)])
           ;(printf "get-class-record: ctype->~a container->~a ~n" ctype container)
           (let*-values (((key key-path) (normalize-key ctype))
                         ((key-inner) (when (cons? container) (string-append (car container) "." key)))
@@ -443,7 +443,7 @@
               (else
                (hash-ref records (cons key path) new-search))))))
 
-      ;normalize-key: (U 'strung ref-type (list string)) -> (values string (list string))
+      ;normalize-key: (U 'string ref-type (list string)) -> (values string (list string))
       (define/private (normalize-key ctype)
         (cond
           ((eq? ctype 'string) (values "String" `("java" "lang")))
@@ -518,6 +518,7 @@
       
       ;get-require-syntax: bool (list string) . ( -> 'a)  -> syntax
       (define/public (get-require-syntax prefix? name . fail)
+        ;(printf "~a~n" (list prefix? name))
         (hash-ref requires (cons prefix? name) (if (null? fail) syntax-fail (car fail))))
         
       ;add-class-req: name boolean location -> void
@@ -535,6 +536,7 @@
       
       ;require-prefix?: (list string) ( -> 'a) -> bool
       (define/public (require-prefix? name fail)
+        ;(printf "prefix? ~a~n" (list name location (hash-ref class-require location)))
         (hash-ref (hash-ref class-require location require-fail) name fail))
       
       (define/private (member-req req reqs)
@@ -769,7 +771,7 @@
            (assignable (filter (lambda (mr)
                                  (andmap a-convert? (m-atypes mr) arg-types))
                                methods))
-           (sort (lambda (l p) (quicksort l p)))
+           (sort (lambda (l p) (sort l p)))
            (assignable-count (sort
                               (map (lambda (mr)
                                      #;(printf "assigning conversions for ~a~n" (m-atypes mr))
@@ -794,7 +796,7 @@
     (let ((var (string->symbol (java-name->scheme variable))))
       (or (memq var (scheme-record-provides mod-ref))
           (let ((mod-syntax (datum->syntax #f
-                                           `(,#'module m mzscheme
+                                           `(,#'module m racket/base
                                                        (require ,(generate-require-spec (java-name->scheme (scheme-record-name mod-ref))
                                                                                         (scheme-record-path mod-ref)))
                                                        ,var)
@@ -861,11 +863,11 @@
   (define (read-record filename)
     #;(printf "~a ~a ~n" filename 
             (>= (file-or-directory-modify-seconds (build-path filename))
-                (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib"))))
+                (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "racket"))))
     (parse-record (call-with-input-file filename read)
                   #:up-to-date?
                   (>= (file-or-directory-modify-seconds (build-path filename))
-                      (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib")))))
+                      (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "racket")))))
   
   (define (parse-record datum #:up-to-date? [up-to-date? #t])
     (letrec ((parse-class/iface

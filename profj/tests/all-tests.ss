@@ -1,4 +1,4 @@
-(module all-tests mzscheme
+(module all-tests racket/base
   (require "full-tests.ss")
   (require "advanced-tests.ss")
 #;(require "intermediate-access-tests.scm")

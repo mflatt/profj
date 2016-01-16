@@ -1,11 +1,11 @@
-(module parameters scheme/base
+(module parameters racket/base
   
   (provide (all-defined-out))
   
   ;Stores the classpath for the current run
   (define classpath (make-parameter null))
   
-  ;Stores syntax-oddness for datum->syntax-object
+  ;Stores syntax-oddness for datum->syntax
   (define syntax-location (make-parameter #f))
   
   ;Stores asts of other packages

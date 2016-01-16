@@ -1,4 +1,4 @@
-(module ArrayStoreException mzscheme
+(module ArrayStoreException racket/base
   (require "Object-composite.ss")
   (provide
    ArrayStoreException

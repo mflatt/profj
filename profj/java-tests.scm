@@ -1,7 +1,6 @@
-#lang scheme/base
+#lang racket/base
 
-(require scheme/class
-         mzlib/etc
+(require racket/class
          profj/display-java
          (lib "test-engine.rkt" "test-engine")
          (lib "test-display.scm" "test-engine")

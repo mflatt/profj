@@ -1,9 +1,9 @@
-#lang scheme/gui
+#lang racket/gui
 
 (require htdp/draw
          lang/posn
-         mzlib/class
-         mzlib/unit
+         racket/class
+         racket/unit
          profj/libs/java/lang/String
          profj/libs/java/lang/Throwable
          profj/libs/java/lang/RuntimeException)

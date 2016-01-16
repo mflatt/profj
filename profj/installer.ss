@@ -1,9 +1,9 @@
-(module installer mzscheme
-  (require (prefix lang: profj/libs/java/lang/installer)
-           (prefix io: profj/libs/java/io/installer)
-           (prefix test: profj/libs/java/tester/installer)
-           (prefix util: profj/libs/java/util/installer)
-           (prefix htdch: (lib "installer.scm" "profj" "htdch"))
+(module installer racket/base
+  (require (prefix-in lang: profj/libs/java/lang/installer)
+           (prefix-in io: profj/libs/java/io/installer)
+           (prefix-in test: profj/libs/java/tester/installer)
+           (prefix-in util: profj/libs/java/util/installer)
+           (prefix-in htdch: (lib "installer.scm" "profj" "htdch"))
            )
   (provide installer)
 

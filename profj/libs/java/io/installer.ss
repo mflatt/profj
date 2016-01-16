@@ -1,4 +1,4 @@
-(module installer mzscheme
+(module installer racket/base
   (provide installer)
 
   (define (installer plthome)

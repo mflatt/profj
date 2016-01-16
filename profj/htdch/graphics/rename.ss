@@ -1,7 +1,7 @@
-(module rename mzscheme
+(module rename racket/base
 
-  (require mzlib/class
-           (all-except mred make-color)
+  (require racket/class
+           (except-in mred make-color)
            htdp/image)
   
   (provide to-symbol new-object call-back-canvas% overlay-x-y 

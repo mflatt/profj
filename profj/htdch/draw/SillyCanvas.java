@@ -18,7 +18,7 @@ public class SillyCanvas extends Canvas {
   }
   
   public boolean drawCircle(Posn p, int r, IColor c) {
-    return super.drawCircle(p,r,c) && warning(); 
+    return super.drawCircle(p,r,c) && warning();
   }
   
   public boolean drawDisk(Posn p, int r, IColor c) {

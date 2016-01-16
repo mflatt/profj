@@ -1,7 +1,7 @@
 #cs
-(module Serializable mzscheme
-  (require mzlib/class)
+(module Serializable racket/base
+  (require racket/class)
   
-  (provide (all-defined))
+  (provide (all-defined-out))
   
   (define Serializable (interface ())))

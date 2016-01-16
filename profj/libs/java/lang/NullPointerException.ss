@@ -1,4 +1,4 @@
-(module NullPointerException mzscheme
+(module NullPointerException racket/base
   (require "Object-composite.ss")
   (provide
    NullPointerException

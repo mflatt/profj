@@ -1,10 +1,10 @@
-#lang mzscheme
+#lang racket/base
 
-(require (prefix geo:   "geometry/installer.ss")
-         (prefix color: "colors/installer.ss")
-         (prefix draw:  "draw/installer.ss")
-         (prefix idraw: "idraw/installer.ss")
-         (prefix graph: "graphics/installer.ss"))
+(require (prefix-in geo:   "geometry/installer.ss")
+         (prefix-in color: "colors/installer.ss")
+         (prefix-in draw:  "draw/installer.ss")
+         (prefix-in idraw: "idraw/installer.ss")
+         (prefix-in graph: "graphics/installer.ss"))
 
 (provide installer)
 (define (installer plthome)

@@ -1,11 +1,11 @@
-(module parser-units scheme/base
+(module parser-units racket/base
     
   (require parser-tools/lex
-           scheme/unit
+           racket/unit
            combinator-parser/combinator-unit
            #;(lib "combinator-unit.ss" "combinator-parser")
            "java-signatures.scm"
-           mzlib/string)
+           racket/string)
     
   (define-signature language-forms^ (program statement (recurs expression) field interact)) ;value-type method-type))
   
@@ -79,8 +79,7 @@
     
     (define (miscapitalized? t key)
       (and (string? t)
-           (let ((s (string-copy t)))
-             (string-lowercase! s)
+           (let ((s (string-downcase t)))
              (equal? s key))))
     
     (define misspelled-list '((import "mport" "iport" "imort" "imprt" "impot" "impor" "improt" "impourt")

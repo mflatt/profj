@@ -1,4 +1,4 @@
-(module ClassCastException mzscheme
+(module ClassCastException racket/base
   (require "Object-composite.ss")
   (provide
    ClassCastException

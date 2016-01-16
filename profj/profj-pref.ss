@@ -1,6 +1,6 @@
-(module profj-pref scheme/base
+(module profj-pref racket/base
   
-  (require mzlib/file)
+  (require racket/file)
   
   (provide reset-classpath add-to-classpath get-classpath)
 

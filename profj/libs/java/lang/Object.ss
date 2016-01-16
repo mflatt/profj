@@ -1,4 +1,4 @@
-(module Object scheme/base
+(module Object racket/base
   (require "Object-composite.ss")
   (provide ObjectI Object-Mix Object)
   (provide guard-convert-Object convert-assert-Object wrap-convert-assert-Object 

@@ -1,10 +1,10 @@
-(module lexer scheme/base
+(module lexer racket/base
   
   ;; Lexical Analysis according to the Java Language Specification First Edition 
   ;; chapter 3.
   ;; Lacks all Unicode support
   
-  (require scheme/class
+  (require racket/class
            parser-tools/lex
            (prefix-in re: parser-tools/lex-sre)
            profj/parameters) 

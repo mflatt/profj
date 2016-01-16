@@ -1,4 +1,4 @@
-(module pre-installer scheme/base
+(module pre-installer racket/base
   
   ;copy-jinfos path (list string) -> void
   ;Copies the given jinfos into the compiled directory of the given library

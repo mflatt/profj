@@ -1,12 +1,11 @@
-(module to-scheme scheme/base
+(module to-scheme racket/base
   (require "ast.ss"
            "types.ss"
            "name-utils.scm"
            "graph-scc.ss"
            "parameters.ss"
            racket/class
-           mzlib/etc
-           (prefix-in int-set: mzlib/integer-set)
+           (prefix-in int-set: data/integer-set)
            )
   
   (provide translate-program translate-interactions (struct-out compilation-unit))
@@ -31,19 +30,17 @@
   (define module-name (make-parameter ""))
   (define module-require (make-parameter ""))
   
-  ;Parameters for inforamtion about the types
+  ;Parameters for information about the types
   (define types (make-parameter null))
   (define current-depth (make-parameter 0))
   (define current-local-classes (make-parameter null))
-    
-  (define datum->syntax-object datum->syntax)
-  (define syntax-object->datum syntax->datum)
+
   (define stx-for-original-property (read-syntax #f (open-input-string "original")))
   (define (stx-for-source) stx-for-original-property)
   (define (create-syntax oddness sexpression source)
-    (datum->syntax-object (or oddness (syntax-location) (stx-for-source)) sexpression source stx-for-original-property))
+    (datum->syntax (or oddness (syntax-location) (stx-for-source)) sexpression source stx-for-original-property))
   (define (make-syntax oddness sexpression source)
-    (datum->syntax-object (or oddness (syntax-location) (stx-for-source)) sexpression source))
+    (datum->syntax (or oddness (syntax-location) (stx-for-source)) sexpression source))
   
   ;-------------------------------------------------------------------------------------------------------------
   
@@ -290,17 +287,17 @@
   
   ;translate-defs: (list def) type-records -> (values (list syntax) (list reqs))
   (define (translate-defs defs type-recs)
-    (let ((sorted-d-list (sort (map (compose id-string def-name) defs) string<?)))                                   
+    (let ((sorted-d-list (sort (map (compose id-string def-name) defs) string<?)))
       (module-name (make-composite-name (car sorted-d-list))))
     (module-require 
      (if (to-file) 
          (let ((location (build-path (begin (send type-recs set-location! (def-file (car defs)))
                                             (send type-recs get-compilation-location) "compiled")
-                                     (string-append (symbol->string (module-name)) "_ss.zo"))))
+                                     (string-append (symbol->string (module-name)) "_rkt.zo"))))
            (for-each 
             (lambda (def) (send type-recs set-composite-location (id-string (def-name def)) location))
             defs)
-           `(file ,(path->string (build-path (string-append (symbol->string (module-name)) ".ss")))))
+           `(file ,(path->string (build-path (string-append (symbol->string (module-name)) ".rkt")))))
          #`(quote #,(module-name))))
     (let* ((translated-defs 
             (map (lambda (d)
@@ -313,10 +310,10 @@
                                           defs)))
            (reqs (filter-reqs group-reqs defs type-recs)))
       (values (if (> (length translated-defs) 1)
-                  (cons (make-syntax #f `(module ,(module-name) scheme/base
+                  (cons (make-syntax #f `(module ,(module-name) racket/base
                                            (require racket/class
                                                     (prefix-in javaRuntime: profj/libs/java/runtime)
-                                                    (prefix-in c: scheme/contract)
+                                                    (prefix-in c: racket/contract)
                                                     ,@(remove-dup-syntax (translate-require reqs type-recs)))
                                            ,@(apply append (map car translated-defs)))
                                      #f)
@@ -325,10 +322,10 @@
                                      `(module ,(build-identifier (regexp-replace "-composite" 
                                                                                  (symbol->string (module-name)) 
                                                                                  ""))
-                                        scheme/base
+                                        racket/base
                                         (require racket/class
                                                  (prefix-in javaRuntime: profj/libs/java/runtime)
-                                                 (prefix-in c: scheme/contract)
+                                                 (prefix-in c: racket/contract)
                                                  ,@(remove-dup-syntax
                                                     (translate-require (map (lambda (r) (list (def-file (car defs)) r))
                                                                             (def-uses (car defs)))
@@ -416,6 +413,9 @@
                             (cons (req-class req) (req-path req))
                             err))
                (translate-require (cdr reqs) type-recs))))))
+
+  (require racket/trace)
+;  (trace translate-require)
   
   ;translate-implements: (list name) -> (list syntax)
   (define (translate-implements imp)
@@ -775,7 +775,7 @@
                   (list class-syntax 
                         (make-syntax 
                          #f
-                         `(module ,(build-identifier (class-name)) mzscheme (require ,(module-require)) ,provides)
+                         `(module ,(build-identifier (class-name)) racket/base (require ,(module-require)) ,provides)
                          #f)))
               (when (> depth 0)
                 (class-name old-class-name)
@@ -992,7 +992,7 @@
   
   ;assert-value: sexp type boolean -> sexp
   (define assert-value 
-    (opt-lambda (value type from-dynamic? (kind 'unspecified) (name #f))
+    (lambda (value type from-dynamic? (kind 'unspecified) (name #f))
       (cond
         ((symbol? type)
          (let ((check
@@ -1456,7 +1456,7 @@
                                              null)
                           (generate-contract-defs (class-name)))
                 )
-              (make-syntax #f `(module ,name mzscheme (require ,(module-require)) ,provides) #f)))))
+              (make-syntax #f `(module ,name racket/base (require ,(module-require)) ,provides) #f)))))
 
   ;-----------------------------------------------------------------------------------------------------------------
   ;Member translation functions
@@ -2940,10 +2940,10 @@
                   (build-src src)))
     (else
      (let*  ((class (get-class-name type))
-             (ca-class (string->symbol (format "convert-assert-~a" (syntax-object->datum class))))
-             (gc-class (string->symbol (format "guard-convert-~a" (syntax-object->datum class)))))
-       (if (or (eq? (syntax-object->datum class) 'String)
-               (eq? (syntax-object->datum class) 'java.lang.String))
+             (ca-class (string->symbol (format "convert-assert-~a" (syntax->datum class))))
+             (gc-class (string->symbol (format "guard-convert-~a" (syntax->datum class)))))
+       (if (or (eq? (syntax->datum class) 'String)
+               (eq? (syntax->datum class) 'java.lang.String))
            (make-syntax #f `(javaRuntime:cast-reference ,expr ,class null null ,(type-spec-dim type)
                                                         (quote ,(get-class-name type)))
                         (build-src src))
@@ -3113,7 +3113,7 @@
     (let ((t (create-syntax #f `(lambda () ,(translate-expression test)) #f))
           (n (get-class-name catch)))
       (make-syntax #f
-                   `(javaRuntime:check-catch ,t ,(symbol->string (syntax-object->datum n)) ,n ,(checked-info test) 
+                   `(javaRuntime:check-catch ,t ,(symbol->string (syntax->datum n)) ,n ,(checked-info test) 
                                              (quote ,(src->list src))
                                              (namespace-variable-value 'current~test~object% #f
                                                                        (lambda () #f)))

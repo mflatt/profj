@@ -1,5 +1,5 @@
-(module compile-lang-syntax mzscheme
-  (require-for-syntax "compile-lang.ss")
+(module compile-lang-syntax racket/base
+  (require (for-syntax racket/base "compile-lang.ss"))
   
   (provide compile-rest-of-lang)
   

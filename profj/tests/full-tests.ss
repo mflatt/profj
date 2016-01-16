@@ -1,4 +1,4 @@
-(module full-tests mzscheme
+(module full-tests racket/base
   (require "profj-testing.ss"
            (lib "parameters.ss" "profj"))
   

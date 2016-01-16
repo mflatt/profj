@@ -1,9 +1,9 @@
-(module compile scheme/base
+(module compile racket/base
   (require "parameters.ss" "ast.ss" "types.ss" "parser.ss" "build-info.ss" "check.ss" "to-scheme.ss" "profj-pref.ss")
-  (require #;mzlib/list
-           #;mzlib/file
-           scheme/path
-           scheme/class)
+  (require #;racket/list
+           #;racket/file
+           racket/path
+           racket/class)
 
   (provide compile-java compile-interactions compile-files compile-ast compile-interactions-ast
            compilation-unit-code compilation-unit-contains set-compilation-unit-code!
@@ -51,7 +51,7 @@
                       (> (file-or-directory-modify-seconds compiled-path)
                          (file-or-directory-modify-seconds (build-path name)))
                       (> (file-or-directory-modify-seconds compiled-path)
-                         (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib"))))
+                         (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "racket"))))
                (call-with-input-file name (lambda (port) (compile-to-file port name level)))))))
         ((eq? dest 'file)
          (compile-to-file port loc level))
@@ -65,7 +65,7 @@
                               (> (file-or-directory-modify-seconds compiled-path)
                                  (file-or-directory-modify-seconds (build-path name)))
                               (> (file-or-directory-modify-seconds compiled-path)
-                                 (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "mzlib"))))
+                                 (file-or-directory-modify-seconds (collection-file-path "contract.rkt" "racket"))))
                          (and (file-exists? type-path)
                               (read-record type-path)))
                (call-with-input-file 
@@ -99,11 +99,14 @@
                     (unless (= (length names) (length syntaxes))
                       #;(printf "Writing a composite file out~n")
                       #;(printf "~a~n~n" (syntax->datum (car syntaxes)))
+                      ;;AML: the location is updated in the next for-each so I reset it here 
+                      (send type-recs set-location! location)
                       (call-with-output-zo-file* location
                                                  (build-path (send type-recs get-compilation-location)
                                                              (file-name-from-path
                                                               (send type-recs get-composite-location (car names))))
-                                                 (lambda (port) (write (compile-module (car syntaxes)) port)) 'truncate/replace)
+                                                 (lambda (port) (write (compile-module (car syntaxes)) port))
+                                                 'truncate/replace)
                       (set! syntaxes (cdr syntaxes)))
                     (unless (= (length names) (length syntaxes) (length locations))
                       (error 'compile-to-file "Internal error: compilation unit not represented as expected"))
@@ -114,7 +117,7 @@
                                 (let ((directory (send type-recs get-compilation-location)))
                                   (unless (directory-exists? directory) (make-directory directory))
                                   (call-with-output-zo-file* location
-                                                             (build-path directory (string-append name "_ss.zo"))
+                                                             (build-path directory (string-append name "_rkt.zo"))
                                                              (lambda (port) (write (compile-module code) port))
                                                              'truncate/replace)
                                   (call-with-output-file* (build-path directory (string-append name ".jinfo"))

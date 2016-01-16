@@ -1,12 +1,12 @@
-(module java-signatures mzscheme
+(module java-signatures racket/base
   
-  (require mzlib/unit)
+  (require racket/unit)
   
   (require parser-tools/lex
            (lib "combinator-unit.ss" "combinator-parser")
-           mzlib/string)
+           racket/string)
   
-  (provide (all-defined))
+  (provide (all-defined-out))
   
   ;Terminal signatures
     
