@@ -99,8 +99,6 @@
                     (unless (= (length names) (length syntaxes))
                       #;(printf "Writing a composite file out~n")
                       #;(printf "~a~n~n" (syntax->datum (car syntaxes)))
-                      ;;AML: the location is updated in the next for-each so I reset it here 
-                      (send type-recs set-location! location)
                       (call-with-output-zo-file* location
                                                  (build-path (send type-recs get-compilation-location)
                                                              (file-name-from-path
@@ -113,7 +111,7 @@
                     (for-each (lambda (name code location)
                                 #;(printf "writing out ~a~n" name)
                                 #;(printf "~a~n~n" (syntax->datum code))
-                                (send type-recs set-location! location)
+                                (setting-location (type-recs location)
                                 (let ((directory (send type-recs get-compilation-location)))
                                   (unless (directory-exists? directory) (make-directory directory))
                                   (call-with-output-zo-file* location
@@ -126,7 +124,7 @@
                                                                                              #f
                                                                                              class-record-error)
                                                                                        port))
-                                                          #:exists 'truncate/replace)))
+                                                          #:exists 'truncate/replace))))
                               names syntaxes locations)))
                 (compile-java-internal port location type-recs #t level))))
 
@@ -303,9 +301,9 @@
     (and (member (req-class class) (compilation-unit-contains cu))
          (equal? (req-path class)
                  (begin
-                   (send type-recs set-location! (list-ref (compilation-unit-locations cu)
-                                                           (get-position (req-class class) (compilation-unit-contains cu) 0)))
-                   (send type-recs lookup-path (req-class class) (lambda () (error 'internal-error)))))))
+                   (setting-location (type-recs (list-ref (compilation-unit-locations cu)
+                                                          (get-position (req-class class) (compilation-unit-contains cu) 0)))
+                                     (send type-recs lookup-path (req-class class) (lambda () (error 'internal-error))))))))
   
   ;get-position: 'a (list 'a) int -> int
   (define (get-position name names pos)
