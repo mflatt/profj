@@ -1,7 +1,7 @@
 (module analysis racket/base
   
-  (require "ast.ss"
-           "types.ss"
+  (require "ast.rkt"
+           "types.rkt"
            racket/list
            racket/class)
   

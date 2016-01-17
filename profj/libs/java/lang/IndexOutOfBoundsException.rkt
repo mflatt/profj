@@ -1,5 +1,5 @@
 (module IndexOutOfBoundsException racket/base
-  (require "Object-composite.ss")
+  (require "Object-composite.rkt")
   (provide
    IndexOutOfBoundsException
    guard-convert-IndexOutOfBoundsException

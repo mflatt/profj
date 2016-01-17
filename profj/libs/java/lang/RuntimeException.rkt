@@ -1,5 +1,5 @@
 (module RuntimeException racket/base
-  (require "Object-composite.ss")
+  (require "Object-composite.rkt")
   (provide
    RuntimeException
    guard-convert-RuntimeException

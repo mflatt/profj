@@ -1,3 +1,3 @@
 #lang setup/infotab
 
-;; (define install-collection "installer.ss")
+;; (define install-collection "installer.rkt")

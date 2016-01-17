@@ -3,7 +3,7 @@
            (prefix-in io: profj/libs/java/io/installer)
            (prefix-in test: profj/libs/java/tester/installer)
            (prefix-in util: profj/libs/java/util/installer)
-           (prefix-in htdch: (lib "installer.scm" "profj" "htdch"))
+           (prefix-in htdch: (lib "installer.rkt" "profj" "htdch"))
            )
   (provide installer)
 

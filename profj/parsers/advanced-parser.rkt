@@ -1,9 +1,9 @@
 (module advanced-parser racket/base
 
-  (require "general-parsing.ss"
-           "lexer.ss"
-           "../ast.ss"
-           "../parameters.ss")
+  (require "general-parsing.rkt"
+           "lexer.rkt"
+           "../ast.rkt"
+           "../parameters.rkt")
   
   (require parser-tools/yacc
            (except-in parser-tools/lex input-port)

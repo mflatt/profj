@@ -1,7 +1,7 @@
 (module all-tests racket/base
-  (require "full-tests.ss")
-  (require "advanced-tests.ss")
-#;(require "intermediate-access-tests.scm")
-  (require "intermediate-tests.ss")
-  (require "beginner-tests.ss")
+  (require "full-tests.rkt")
+  (require "advanced-tests.rkt")
+#;(require "intermediate-access-tests.rkt")
+  (require "intermediate-tests.rkt")
+  (require "beginner-tests.rkt")
   )

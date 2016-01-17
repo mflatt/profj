@@ -1,6 +1,6 @@
 #lang scheme
 
-(require (lib "profj/htdch/draw/support.scm")
+(require (lib "profj/htdch/draw/support.rkt")
          racket/unit)
 
 (provide endOfTime-java.lang.String-native endOfWorld-java.lang.String-native bigBangO-double-native)

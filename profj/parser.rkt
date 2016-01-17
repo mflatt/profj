@@ -1,16 +1,16 @@
 
 (module parser racket/base
-  (require "parsers/full-parser.ss"
-           "parsers/advanced-parser.ss"
-           "parsers/intermediate-access-parser.ss"
-           "parsers/intermediate-parser.ss"
-           "parsers/beginner-parser.ss"
-           "parsers/general-parsing.ss"
-           "parsers/parse-error.ss"
-           "parsers/lexer.ss"
-           (prefix-in err: "comb-parsers/parsers.scm")
-           "ast.ss"
-           "parameters.ss")
+  (require "parsers/full-parser.rkt"
+           "parsers/advanced-parser.rkt"
+           "parsers/intermediate-access-parser.rkt"
+           "parsers/intermediate-parser.rkt"
+           "parsers/beginner-parser.rkt"
+           "parsers/general-parsing.rkt"
+           "parsers/parse-error.rkt"
+           "parsers/lexer.rkt"
+           (prefix-in err: "comb-parsers/parsers.rkt")
+           "ast.rkt"
+           "parameters.rkt")
   
   (require (except-in parser-tools/lex input-port)
            syntax/readerr

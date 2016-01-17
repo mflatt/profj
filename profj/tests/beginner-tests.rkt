@@ -1,5 +1,5 @@
 (module beginner-tests racket/base
-  (require "profj-testing.ss")
+  (require "profj-testing.rkt")
   (require racket/class
            profj/libs/java/lang/Object
            profj/libs/java/lang/String)

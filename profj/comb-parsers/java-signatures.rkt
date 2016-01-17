@@ -3,7 +3,7 @@
   (require racket/unit)
   
   (require parser-tools/lex
-           (lib "combinator-unit.ss" "combinator-parser")
+           (lib "combinator-unit.rkt" "combinator-parser")
            racket/string)
   
   (provide (all-defined-out))

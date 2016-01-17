@@ -1,5 +1,5 @@
 (module intermediate-tests racket/base
-  (require "profj-testing.ss")
+  (require "profj-testing.rkt")
   
   (prepare-for-tests "Intermediate")
   

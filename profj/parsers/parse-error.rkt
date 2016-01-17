@@ -1,7 +1,7 @@
 (module parse-error racket/base
   
-  (require "lexer.ss" "general-parsing.ss"
-           "../parameters.ss"
+  (require "lexer.rkt" "general-parsing.rkt"
+           "../parameters.rkt"
            syntax/readerr
            (except-in parser-tools/lex input-port))
   

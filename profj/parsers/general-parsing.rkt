@@ -5,7 +5,7 @@
    (except-in parser-tools/lex input-port)
    racket/string
    (prefix-in class: racket/class))
-  (require "../ast.ss" "../parameters.ss" "lexer.ss")
+  (require "../ast.rkt" "../parameters.rkt" "lexer.rkt")
   
   (provide (all-defined-out))
 

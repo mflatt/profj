@@ -1,5 +1,5 @@
 (module ArrayStoreException racket/base
-  (require "Object-composite.ss")
+  (require "Object-composite.rkt")
   (provide
    ArrayStoreException
    guard-convert-ArrayStoreException

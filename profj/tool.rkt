@@ -7,13 +7,13 @@
            racket/runtime-path
            racket/class
 	   string-constants)
-  (require "parameters.ss" 
-           "parsers/lexer.ss"
+  (require "parameters.rkt" 
+           "parsers/lexer.rkt"
            (lib "test-engine/test-engine.rkt")
-           "java-tests.scm"
-           (lib "test-engine/test-coverage.scm")
-           (except-in "ast.ss" for)
-           "display-java.ss")
+           "java-tests.rkt"
+           (lib "test-engine/test-coverage.rkt")
+           (except-in "ast.rkt" for)
+           "display-java.rkt")
 
   (require (for-syntax racket/base))
   
@@ -29,14 +29,14 @@
                (apply orig-fn x)))
            ...)]))
     
-  (dr "compile.ss"
+  (dr "compile.rkt"
       compile-java compile-interactions compile-files compile-ast compile-interactions-ast
       compilation-unit-code compilation-unit-contains set-compilation-unit-code!
       read-record write-record
       set-syntax-location create-type-record
       compile-to-ast)
 
-  (dr "parser.ss"
+  (dr "parser.rkt"
       parse parse-interactions parse-expression parse-type parse-name)
   
   (provide tool@)
@@ -930,7 +930,7 @@
                                 (parse-java-interactions ast-2 ed-2) end1 end2)
                      (datum->syntax #f
                                     `(,(syntax test-case)
-                                      ,(dynamic-require '(lib "profj-testing.ss" "profj") 'java-values-equal?);,(syntax eq)
+                                      ,(dynamic-require '(lib "profj-testing.rkt" "profj") 'java-values-equal?);,(syntax eq)
                                       ,(compile-interactions-ast (syntax->datum (syntax ast-1))
                                                                  (syntax->datum (syntax ed-1)) level type-recs #f)
                                       ,(compile-interactions-ast (syntax->datum (syntax ast-2))

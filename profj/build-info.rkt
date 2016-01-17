@@ -1,8 +1,8 @@
 (module build-info racket/base
   
   (require racket/class racket/path 
-           "ast.ss" "types.ss" "error-messaging.ss" "parameters.ss" 
-           "restrictions.ss" "parser.ss" "profj-pref.ss")
+           "ast.rkt" "types.rkt" "error-messaging.rkt" "parameters.rkt" 
+           "restrictions.rkt" "parser.rkt" "profj-pref.rkt")
 
   (provide build-info build-interactions-info build-inner-info find-implicit-import load-lang)
   
@@ -59,7 +59,7 @@
            (make-name (lambda ()
                         (let ((n (if scheme? (java-name->scheme name) name)))
                           (if (or (not local?) profj-lib? htdch-lib? scheme-lib? (to-file))
-                              (string-append n ".ss")
+                              (string-append n ".rkt")
                               (string->symbol n))))))
       (if scheme?
           (list (syn `(prefix-in ,(string->symbol
@@ -357,8 +357,8 @@
     
   ;check-scheme-file-exists? string path -> bool
   (define (check-scheme-file-exists? name path)
-    (or (file-exists? (build-path path (string-append (java-name->scheme name) ".ss")))
-        (file-exists? (build-path path (string-append (java-name->scheme name) ".scm")))))
+    (or (file-exists? (build-path path (string-append (java-name->scheme name) ".rkt")))
+        (file-exists? (build-path path (string-append (java-name->scheme name) ".rkt")))))
   
   (define (check-submodule-exists name path)
     (define file-path (build-path path (string-append (java-name->scheme name) ".rkt")))
@@ -446,8 +446,8 @@
   ;get-class-list: dir-path -> (list string)
   (define (get-class-list dir)
     (if (and (dynamic?) (dir-path-scheme? dir))
-        (filter (lambda (f) (or (equal? (filename-extension f) #".ss")
-                                (equal? (filename-extension f) #".scm")))
+        (filter (lambda (f) (or (equal? (filename-extension f) #".rkt")
+                                (equal? (filename-extension f) #".rkt")))
                 (directory-list (dir-path-path dir)))
         (filter (lambda (c-name) (not (equal? c-name "")))
                 (map (lambda (fn)
@@ -479,7 +479,7 @@
                                 (directory-list (build-path (dir-path-path base-dir) "compiled")))))))
            (lang-classes (get-classes lang-dir)) 
            (test-classes (when (testcase-ext?) (get-classes test-dir)))
-           (array (datum->syntax #f `(lib "array.ss" "profj/libs/java/lang") #f))
+           (array (datum->syntax #f `(lib "array.rkt" "profj/libs/java/lang") #f))
            
            (add
             (lambda (path classes dir array?)

@@ -1,5 +1,5 @@
 (module ClassCastException racket/base
-  (require "Object-composite.ss")
+  (require "Object-composite.rkt")
   (provide
    ClassCastException
    guard-convert-ClassCastException

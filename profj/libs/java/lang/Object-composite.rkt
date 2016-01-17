@@ -6,7 +6,7 @@
            
            profj/libs/java/lang/Comparable
            profj/libs/java/io/Serializable)
-  #;(require "compile-lang-syntax.ss")  
+  #;(require "compile-lang-syntax.rkt")  
   
 ;                                            
 ;         ;;         ;                       

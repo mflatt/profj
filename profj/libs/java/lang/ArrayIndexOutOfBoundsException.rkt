@@ -1,5 +1,5 @@
 (module ArrayIndexOutOfBoundsException racket/base
-  (require "Object-composite.ss")
+  (require "Object-composite.rkt")
   (provide
    ArrayIndexOutOfBoundsException
    guard-convert-ArrayIndexOutOfBoundsException

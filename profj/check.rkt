@@ -1,12 +1,12 @@
 (module check racket/base
 
-  (require "ast.ss"
-           "types.ss"
-           "parameters.ss"
-           "error-messaging.ss"
-           "restrictions.ss"
-           "profj-pref.ss"
-           "build-info.ss"
+  (require "ast.rkt"
+           "types.rkt"
+           "parameters.rkt"
+           "error-messaging.rkt"
+           "restrictions.rkt"
+           "profj-pref.rkt"
+           "build-info.rkt"
            racket/class racket/path
            (prefix-in srfi: srfi/1) racket/string)
   (provide check-defs check-interactions-types)

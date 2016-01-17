@@ -3,8 +3,8 @@
   (require parser-tools/lex
            racket/unit
            combinator-parser/combinator-unit
-           #;(lib "combinator-unit.ss" "combinator-parser")
-           "java-signatures.scm"
+           #;(lib "combinator-unit.rkt" "combinator-parser")
+           "java-signatures.rkt"
            racket/string)
     
   (define-signature language-forms^ (program statement (recurs expression) field interact)) ;value-type method-type))

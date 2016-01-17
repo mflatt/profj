@@ -1,5 +1,5 @@
 (module NullPointerException racket/base
-  (require "Object-composite.ss")
+  (require "Object-composite.rkt")
   (provide
    NullPointerException
    guard-convert-NullPointerException

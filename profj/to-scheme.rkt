@@ -1,9 +1,9 @@
 (module to-scheme racket/base
-  (require "ast.ss"
-           "types.ss"
-           "name-utils.scm"
-           "graph-scc.ss"
-           "parameters.ss"
+  (require "ast.rkt"
+           "types.rkt"
+           "name-utils.rkt"
+           "graph-scc.rkt"
+           "parameters.rkt"
            racket/class
            (prefix-in int-set: data/integer-set)
            )
@@ -3263,7 +3263,7 @@
                                                                           (lambda () #f))))
                    (build-src src))))
     
-  (require "error-messaging.ss")
+  (require "error-messaging.rkt")
   
   ;checked-info: expression -> (list sym string...)
   (define (checked-info exp)

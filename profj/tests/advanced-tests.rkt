@@ -1,5 +1,5 @@
 (module advanced-tests racket/base
-  (require "profj-testing.ss")
+  (require "profj-testing.rkt")
   (require profj/libs/java/lang/String)
   
   (prepare-for-tests "Advanced")

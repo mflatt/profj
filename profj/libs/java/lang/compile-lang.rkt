@@ -80,15 +80,15 @@
   ;Writes out module stubes to file: assumes package lang for now
   (define (write-out-files names bodies)
     (for-each (lambda (name mod) 
-                (unless (file-exists? (string-append name ".ss"))
-                  (call-with-output-file (string-append name ".ss")
+                (unless (file-exists? (string-append name ".rkt"))
+                  (call-with-output-file (string-append name ".rkt")
                     (lambda (port) (pretty-print (syntax->datum mod) port))
                     'truncate/replace)))
               names
               (map (lambda (name provide)
                      (datum->syntax #f
                                     `(module ,(string->symbol name) racket/base
-                                       (require "Object-composite.ss")
+                                       (require "Object-composite.rkt")
                                        ,provide)
                                     #f))
                    names (map get-provides bodies))))

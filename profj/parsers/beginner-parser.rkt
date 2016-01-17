@@ -1,9 +1,9 @@
 (module beginner-parser racket/base
   
-  (require "general-parsing.ss"
-           "lexer.ss"
-           "../ast.ss"
-           "../parameters.ss")
+  (require "general-parsing.rkt"
+           "lexer.rkt"
+           "../ast.rkt"
+           "../parameters.rkt")
   
   (require parser-tools/yacc
            (except-in parser-tools/lex input-port)           
@@ -13,7 +13,7 @@
   
   (define parsers
     (parser
-     ;(debug "out2.ss")
+     ;(debug "out2.rkt")
      (start CompilationUnit BeginnerInteractions Expression Type)
      (tokens java-vals special-toks Keywords Separators EmptyLiterals Operators ExtraKeywords)
      ;(terminals val-tokens special-tokens keyword-tokens separator-tokens literal-tokens operator-tokens)

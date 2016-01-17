@@ -6,7 +6,7 @@
    racket/list
    racket/bool
    racket/class
-   "ast.ss")
+   "ast.rkt")
   
   (provide (except-out (all-defined-out)
                        number-assign-conversions remove-dups meth-member?
@@ -549,7 +549,7 @@
       (define/public (get-compilation-location)
         (hash-ref compilation-location location 
                   (lambda () (error 'get-compilation-location "Internal error: location not found"))))
-      (define/public (set-composite-location name dir) (hash-set! compilation-location name dir))
+        (define/public (set-composite-location name dir) (hash-set! compilation-location name dir))
       (define/public (get-composite-location name)
         ;(printf "get-composite-location for ~a~n" name)
         ;(hash-for-each compilation-location
@@ -808,7 +808,7 @@
           
   ;generate-require-spec: string (list string) -> (U string (list symbol string+))
   (define (generate-require-spec name path)
-    (let ((mod (string-append name ".ss")))
+    (let ((mod (string-append name ".rkt")))
       (cond
         ((null? path) mod)
         ((equal? (car path) "lib")  `(lib ,mod ,@(cdr path)))

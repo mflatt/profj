@@ -1,5 +1,5 @@
 (module compile racket/base
-  (require "parameters.ss" "ast.ss" "types.ss" "parser.ss" "build-info.ss" "check.ss" "to-scheme.ss" "profj-pref.ss")
+  (require "parameters.rkt" "ast.rkt" "types.rkt" "parser.rkt" "build-info.rkt" "check.rkt" "to-scheme.rkt" "profj-pref.rkt")
   (require #;racket/list
            #;racket/file
            racket/path
@@ -40,7 +40,7 @@
         ((and (eq? src 'file) (eq? dest 'file))
          (let-values  (((path-base file dir?) (split-path (path->complete-path (build-path name)))))
            (let ((compiled-path (build-path path-base "compiled" (path-add-suffix
-                                                                  (path-replace-suffix file ".ss")
+                                                                  (path-replace-suffix file ".rkt")
                                                                   ".zo")))
                  (type-path (build-path path-base "compiled" (path-replace-suffix file ".jinfo"))))
              (unless 
@@ -58,7 +58,7 @@
         ((eq? src 'file)
          (let-values  (((path-base file dir?) (split-path (path->complete-path (build-path name)))))
            (let ((compiled-path (build-path path-base "compiled" (path-add-suffix
-                                                                  (path-replace-suffix file ".ss")
+                                                                  (path-replace-suffix file ".rkt")
                                                                   ".zo")))
                  (type-path (build-path path-base "compiled" (path-replace-suffix file ".jinfo"))))
              (unless (or (and (file-exists? compiled-path)

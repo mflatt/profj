@@ -1,8 +1,8 @@
 (module profj-testing scheme
   
   (require profj/compile
-           (lib "parameters.ss" "profj")
-           (lib "display-java.ss" "profj")
+           (lib "parameters.rkt" "profj")
+           (lib "display-java.rkt" "profj")
            racket/class)
 
   (define report-expected-error-messages (make-parameter #t))
@@ -96,7 +96,7 @@
                                                         msg ent (exn-message exn)) (interaction-msgs))))))])
                     (parameterize ([current-namespace namespace][coverage? #f])
                       (let ((new-val (eval `(begin (require racket/class
-                                                            (prefix-in javaRuntime: (lib "runtime.ss" "profj" "libs" "java"))
+                                                            (prefix-in javaRuntime: (lib "runtime.rkt" "profj" "libs" "java"))
                                                             (prefix-in c: racket/contract))
                                                    ,(compile-interactions st st type-recs level)))))
                         (when (eq? val 'error)
@@ -147,7 +147,7 @@
                            (let ((st (open-input-string ex-val)))
                              (parameterize ((current-namespace cur-namespace))
                                (eval `(begin (require racket/class
-                                                      (prefix-in javaRuntime: (lib "runtime.ss" "profj" "libs" "java")))
+                                                      (prefix-in javaRuntime: (lib "runtime.rkt" "profj" "libs" "java")))
                                              ,(compile-interactions st st type-recs level))))))
                          val)))
           (interact-internal level in vals msg type-recs cur-namespace)))))
@@ -182,7 +182,7 @@
                       (list 'interact #f (exn-message exn)))])
                 (let* ((get-val (lambda (v-st v-pe)
                                   (eval `(begin (require racket/class)
-                                                (require (prefix-in javaRuntime: (lib "runtime.ss" "profj" "libs" "java")))
+                                                (require (prefix-in javaRuntime: (lib "runtime.rkt" "profj" "libs" "java")))
                                                 ,(compile-interactions v-st v-st type-recs level)))))
                        (i-st (open-input-string interact))
                        (v-st (open-input-string val))

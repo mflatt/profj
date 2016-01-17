@@ -2,8 +2,8 @@
 (module Double-native-methods racket/base
   
   (require racket/class)
-  (require "Throwable.ss" "String.ss"
-           #;"NumberFormatException.ss" "NullPointerException.ss" "RuntimeException.ss")
+  (require "Throwable.rkt" "String.rkt"
+           #;"NumberFormatException.rkt" "NullPointerException.rkt" "RuntimeException.rkt")
   
   (provide (all-defined-out))
   

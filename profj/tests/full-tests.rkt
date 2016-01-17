@@ -1,6 +1,6 @@
 (module full-tests racket/base
-  (require "profj-testing.ss"
-           (lib "parameters.ss" "profj"))
+  (require "profj-testing.rkt"
+           (lib "parameters.rkt" "profj"))
   
   (prepare-for-tests "Full")
 

@@ -1,6 +1,6 @@
 #lang scheme
 
-(require (lib "profj/htdch/draw/support.scm")
+(require (lib "profj/htdch/draw/support.rkt")
          racket/unit)
 
 (define void-or-true #t)

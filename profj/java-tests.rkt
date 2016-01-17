@@ -3,9 +3,9 @@
 (require racket/class
          profj/display-java
          (lib "test-engine.rkt" "test-engine")
-         (lib "test-display.scm" "test-engine")
-         (lib "test-info.scm" "test-engine")
-         (lib "test-coverage.scm" "test-engine"))
+         (lib "test-display.rkt" "test-engine")
+         (lib "test-info.rkt" "test-engine")
+         (lib "test-coverage.rkt" "test-engine"))
 
 (define (java-test-maker test-info-class style) 
   (class* test-engine% ()

@@ -1,7 +1,7 @@
 (module parsers racket/base
-  (require "parser-units.scm"
+  (require "parser-units.rkt"
            racket/unit
-           (only-in (lib "combinator-unit.ss" "combinator-parser") err^))
+           (only-in (lib "combinator-unit.rkt" "combinator-parser") err^))
   
   (provide parse-beginner parse-intermediate parse-intermediate+access parse-advanced
            parse-beginner-interact parse-intermediate-interact parse-advanced-interact)

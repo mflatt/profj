@@ -1,6 +1,6 @@
 (module error-messaging racket/base
   
-  (require "ast.ss" "types.ss")
+  (require "ast.rkt" "types.rkt")
   
   (provide make-error-pass get-expected type->ext-name id->ext-name 
            get-call-type method-name->ext-name path->ext name->path

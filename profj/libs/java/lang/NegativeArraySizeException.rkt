@@ -1,5 +1,5 @@
 (module NegativeArraySizeException racket/base
-  (require "Object-composite.ss")
+  (require "Object-composite.rkt")
   (provide
    NegativeArraySizeException
    guard-convert-NegativeArraySizeException
