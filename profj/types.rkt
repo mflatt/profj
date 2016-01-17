@@ -7,12 +7,24 @@
    racket/bool
    racket/class
    "ast.rkt")
-  
+  (require racket/pretty)
+
   (provide (except-out (all-defined-out)
                        number-assign-conversions remove-dups meth-member?
                        contained-in? consolidate-lists subset? depth conversion-steps
                        generate-require-spec))
-      
+
+  (define (with-location location type-recs fn)
+    (let ((old-location (send type-recs get-location)))
+      (send type-recs set-location2! location)
+      (begin0
+        (fn)
+        (send type-recs set-location2! old-location))))
+
+  (define-syntax-rule
+    (setting-location (type-recs location) body ...)
+    (with-location location type-recs (lambda () body ...)))
+  
   ;; symbol-type = 'null | 'string | 'boolean | 'char | 'byte | 'short | 'int
   ;;             | 'long | 'float | 'double | 'void | 'dynamic
   ;; reference-type = 'null | 'string | (make-ref-type string (list string))
@@ -518,11 +530,12 @@
       
       ;get-require-syntax: bool (list string) . ( -> 'a)  -> syntax
       (define/public (get-require-syntax prefix? name . fail)
-        ;(printf "~a~n" (list prefix? name))
+        #;(printf "~a~n" (list prefix? name))
         (hash-ref requires (cons prefix? name) (if (null? fail) syntax-fail (car fail))))
         
       ;add-class-req: name boolean location -> void
       (define/public (add-class-req name pre loc)
+        ;(printf "add-class-req ~S~n" (list name pre loc))
         (hash-set! (hash-ref class-require
                              loc
                              (lambda () (let ((new-t (make-hash)))
@@ -533,10 +546,11 @@
       ;require-fail
       (define (require-fail)
         (error 'require-prefix "Internal Error: require does not have location"))
-      
+
       ;require-prefix?: (list string) ( -> 'a) -> bool
       (define/public (require-prefix? name fail)
-        ;(printf "prefix? ~a~n" (list name location (hash-ref class-require location)))
+        ;(printf "prefix? ~a~n" (list name location))
+        ;(pretty-print class-require)
         (hash-ref (hash-ref class-require location require-fail) name fail))
       
       (define/private (member-req req reqs)
@@ -545,11 +559,13 @@
                       (equal? (req-path req) (req-path (car reqs))))
                  (member-req req (cdr reqs)))))
 
-      (define/public (set-compilation-location loc dir)  (hash-set! compilation-location loc dir))
+      (define/public (set-compilation-location loc dir)
+        ;(printf "SETTING COMPILATION LOCATION: ~A ~A~n" loc dir)
+        (hash-set! compilation-location loc dir))
       (define/public (get-compilation-location)
         (hash-ref compilation-location location 
                   (lambda () (error 'get-compilation-location "Internal error: location not found"))))
-        (define/public (set-composite-location name dir) (hash-set! compilation-location name dir))
+      (define/public (set-composite-location name dir) (hash-set! compilation-location name dir))
       (define/public (get-composite-location name)
         ;(printf "get-composite-location for ~a~n" name)
         ;(hash-for-each compilation-location
@@ -563,7 +579,10 @@
       (define/public (get-class-reqs) class-reqs)
       (define/public (set-class-reqs reqs) (set! class-reqs reqs))
 
-      (define/public (set-location! l) (set! location l))
+      (define/public (set-location2! l) (set! location l))
+      (define/public (set-location! l)
+        ;(printf "WARNING!!! Setting location:~A~n" l)
+        (set! location l))
       (define/public (get-location) location)
 
       (define interaction-package null)
