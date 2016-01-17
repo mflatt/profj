@@ -31,7 +31,7 @@
            (cond
              ((equal? "String" (send v1 my-name))
               (and (equal? "String" (send v2 my-name))
-                   (equal? (send v1 get-mzscheme-string) (send v2 get-mzscheme-string))))
+                   (equal? (send v1 get-racket-string) (send v2 get-racket-string))))
              ((equal? "array" (send v1 my-name))
               (and (equal? "array" (send v2 my-name))
                    (= (send v1 length) (send v2 length))
