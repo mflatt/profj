@@ -11,7 +11,7 @@
            "parsers/lexer.rkt"
            (lib "test-engine/test-engine.rkt")
            "java-tests.rkt"
-           (lib "test-engine/test-coverage.rkt")
+           (lib "test-engine/test-coverage.scm")
            (except-in "ast.rkt" for)
            "display-java.rkt")
 
