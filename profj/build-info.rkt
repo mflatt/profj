@@ -669,6 +669,14 @@
                        (set-def-members! class
                                          (append unimp-stubs (def-members class)))
                        (set! m (append m (map method-rec unimp-stubs)))))
+
+                   ;;AML
+                   ;(printf "ADDING PARAMS for ~A~n" class)
+                   (for-each (lambda (r)
+                               (send type-recs add-class-req (cons (req-class r) (req-path r)) #f (def-file class)))
+                             (remove-dup-reqs (get-method-reqs m)))
+                   ;(printf "ADDING PARAMS~n")
+
                    
                    (let ((record
                           (make-class-record 
@@ -799,7 +807,7 @@
       ((ref-type? t)
        (make-req (ref-type-class/iface t) (ref-type-path t)))
       #;(else (make-req 'array '()))))
-  
+
   ;; process-interface: interface-def (list string) type-records bool bool symbol -> class-record
   (define (process-interface iface package-name type-recs look-in-table? put-in-table? level)
     (let* ((info (def-header iface))
