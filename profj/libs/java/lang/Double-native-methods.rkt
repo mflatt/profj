@@ -14,7 +14,7 @@
                                     (lambda (obj msg)
                                       (send obj NullPointerException-constructor-java.lang.String msg))
                                     (current-continuation-marks))))             
-    (let* ((scheme-string (send (send s trim) get-mzscheme-string))
+    (let* ((scheme-string (send (send s trim) get-racket-string))
            (num (string->number scheme-string)))
       (or num
           (cond

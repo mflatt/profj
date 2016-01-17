@@ -48,7 +48,7 @@
        (if full-print?
            (format-array->list value (send value length) -1 #t style already-printed newline? num-tabs)
            (format-array->list value 3 (- (send value length) 3) #f style already-printed newline? num-tabs)))
-      ((is-a? value String) (list (format "~v" (send value get-mzscheme-string))))
+      ((is-a? value String) (list (format "~v" (send value get-racket-string))))
       ((string? value) (list (format "~v" value)))
       ((java:exception? value) (internal-format (java:exception-object value) full-print?
                                                 style already-printed newline? num-tabs))

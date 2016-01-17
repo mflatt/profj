@@ -138,7 +138,7 @@
   
   (define (drawString-geometry.Posn-java.lang.String-native this accs gets privates p s)
     (define _ (check-string s "drawString(Posn, String)" "second"))
-    (define s* (send s get-mzscheme-string))
+    (define s* (send s get-racket-string))
     (wrap-start-check
      ([hash-ref privates '%draw-string] (build-posn p) s*)))
   
@@ -200,10 +200,10 @@
   
   (define (endOfTime-java.lang.String-native this accs gets privates s)
     (define _ (check-string s "endOfTime(String)" "first"))	
-    (define t (send s get-mzscheme-string))
+    (define t (send s get-racket-string))
     (define theCanvas ((hash-ref accs 'theCanvas) this))
     (parameterize ([current-eventspace (make-eventspace)])
-      (message-box "end of world" (send s get-mzscheme-string)))
+      (message-box "end of world" (send s get-racket-string)))
     (unless (null? theCanvas)
       (send theCanvas stop))
     #t)
@@ -212,7 +212,7 @@
     (define theCanvas ((hash-ref accs 'theCanvas) this))
     (define _ (check-string s "endOfWorld(String)" "first"))
     (parameterize ([current-eventspace (make-eventspace)])
-      (message-box "end of world" (send s get-mzscheme-string)))
+      (message-box "end of world" (send s get-racket-string)))
     (unless (null? theCanvas)
       (send theCanvas stop))
     this))

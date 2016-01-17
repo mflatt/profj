@@ -254,8 +254,8 @@
       (define/public (notifyAll) (send wrapped notifyAll))
       (define/public (notify-all) (send wrapped notifyAll))        
       (define/public (toString)
-        (send (send wrapped toString) get-mzscheme-string))
-      (define/public (to-string) (send (send wrapped toString) get-mzscheme-string))
+        (send (send wrapped toString) get-racket-string))
+      (define/public (to-string) (send (send wrapped toString) get-racket-string))
       (define/public (wait) (send wrapped wait))
       (define/public (wait-long . l)
         (unless (= (length l) 1)
@@ -465,7 +465,7 @@
   
   (define (make-java-string s)
     (let ((obj (make-object String)))
-      (send obj make-mzscheme-string s)
+      (send obj make-racket-string s)
       obj))
   
   (define String
@@ -475,14 +475,14 @@
       ;private field containing scheme string
       (define text "")
       ;Accessor for scheme string
-      (define/public (get-mzscheme-string) text)
+      (define/public (get-racket-string) text)
       
       ;Constructors
       (define/public (String-constructor) (send this Object-constructor))      
 
       (define/public (String-constructor-java.lang.String string)
         (send this Object-constructor)
-        (set! text (send string get-mzscheme-string)))    
+        (set! text (send string get-racket-string)))    
       
       (define/public (String-constructor-char1 chars)
         (send this Object-constructor)
@@ -508,12 +508,12 @@
     
       (define/public (String-constructor-StringBuffer buffer)
         (send this Object-constructor)
-        (set! text (substring (send (send buffer toString) get-mzscheme-string)
+        (set! text (substring (send (send buffer toString) get-racket-string)
                               0 
                               (send buffer length))))
     
       ;Constructor to use when a string is constructed by ""
-      (define/public (make-mzscheme-string str)
+      (define/public (make-racket-string str)
         (send this Object-constructor)
         (set! text str))
       
@@ -568,11 +568,11 @@
       ;Object -> boolean
       (define/override (equals-java.lang.Object obj)
         (and (is-a? obj String)
-             (equal? text (send (send obj toString) get-mzscheme-string))))
+             (equal? text (send (send obj toString) get-racket-string))))
       
       ;Object -> boolean
       (define/public (equalsIgnoreCase-java.lang.String str)
-        (string-ci=? text (send str get-mzscheme-string)))
+        (string-ci=? text (send str get-racket-string)))
       (define/public (equals-ignore-case s) (equalsIgnoreCase-java.lang.String s))
 
       ;find-diff-chars: int int string-> (values int int)
@@ -592,7 +592,7 @@
       
       ;String -> int
       (define/public (compareTo-java.lang.String str)
-        (let* ((string (send str get-mzscheme-string))
+        (let* ((string (send str get-racket-string))
                (text-l (string-length text))
                (str-l (string-length string)))
           (cond
@@ -609,13 +609,13 @@
             (compareTo-java.lang.String obj)
             (raise (create-java-exception ClassCastException
                                           (format "ClassCastException: Expected argument of class String given ~a"
-                                                  (send (send obj toString) get-mzscheme-string))
+                                                  (send (send obj toString) get-racket-string))
                                           (lambda (obj msg) (send obj ClassCastException-constructor-String msg))
                                           (current-continuation-marks)))))
       
       ;String -> int
       (define/public (compareToIgnoreCase-java.lang.String str)
-        (letrec ((string (send str get-mzscheme-string))
+        (letrec ((string (send str get-racket-string))
                  (find-diff-chars
                   (lambda (i)
                     (if (>= i (length text))
@@ -641,7 +641,7 @@
     
       ;int String int int -> boolean
       (define/public (regionMatches-int-java.lang.String-int-int toffset jstr ooffset len)
-        (let ((str (send jstr get-mzscheme-string)))
+        (let ((str (send jstr get-racket-string)))
           (and (not (negative? toffset))
                (not (negative? ooffset))
                (<= (+ toffset len) (string-length text))
@@ -651,7 +651,7 @@
     
       ;.... -> boolean
       (define/public (regionMatches-boolean-int-java.lang.String-int-int case? toffset jstr ooffset len)
-        (let ((str (send jstr get-mzscheme-string)))
+        (let ((str (send jstr get-racket-string)))
           (and (not (negative? toffset))
                (not (negative? ooffset))
                (<= (+ toffset len) (string-length text))
@@ -661,19 +661,19 @@
     
       ; .... -> boolean
       (define/public (startsWith-java.lang.String-int Jprefix offset)
-        (let ((prefix (send Jprefix get-mzscheme-string)))
+        (let ((prefix (send Jprefix get-racket-string)))
           (and (not (negative? offset))
                (<= (+ offset (string-length prefix)) (string-length text))
                (string=? prefix (substring text offset (+ offset (string-length prefix)))))))
     
       ;..... -> boolean
       (define/public (startsWith-java.lang.String Jprefix)
-        (let ((prefix (send Jprefix get-mzscheme-string)))
+        (let ((prefix (send Jprefix get-racket-string)))
           (and (<= (string-length prefix) (string-length text))
                (string=? prefix (substring text 0 (string-length prefix))))))     
           
       (define/public (endsWith-java.lang.String Jsuffix)
-        (let ((suffix (send Jsuffix get-mzscheme-string)))
+        (let ((suffix (send Jsuffix get-racket-string)))
           (and (<= (string-length suffix) (string-length text))
                (string=? suffix (substring text (- (string-length text) (string-length suffix)) (string-length text))))))
       (define/public (ends-with s) (endsWith-java.lang.String s))
@@ -722,15 +722,15 @@
     
       (define/public (indexOf-int ch) (find-char (if (number? ch) (integer->char ch) ch) 0))
       (define/public (indexOf-int-int ch offset) (find-char (if (number? ch) (integer->char ch) ch) offset))
-      (define/public (indexOf-java.lang.String str) (find-str (send str get-mzscheme-string) str 0))    
-      (define/public (indexOf-java.lang.String-int str offset) (find-str (send str get-mzscheme-string) str offset))
+      (define/public (indexOf-java.lang.String str) (find-str (send str get-racket-string) str 0))    
+      (define/public (indexOf-java.lang.String-int str offset) (find-str (send str get-racket-string) str offset))
       
       (define/public (lastIndexOf-int ch) 
         (find-last-char (if (number? ch) (integer->char ch) ch) 0 -1))
       (define/public (lastIndexOf-int-int ch offset) 
         (find-last-char (if (number? ch) (integer->char ch) ch) offset -1))
-      (define/public (lastIndexOf-java.lang.String str) (find-last-string (send str get-mzscheme-string) str 0 -1))
-      (define/public (lastIndexOf-java.lang.String-int str offset) (find-last-string (send str get-mzscheme-string) str offset -1))
+      (define/public (lastIndexOf-java.lang.String str) (find-last-string (send str get-racket-string) str 0 -1))
+      (define/public (lastIndexOf-java.lang.String-int str offset) (find-last-string (send str get-racket-string) str offset -1))
     
       ;int -> String
       (define/public (substring-int index) 
@@ -761,7 +761,7 @@
       
       ;String -> String
       (define/public (concat-java.lang.String Jstr)
-        (let ((str (send Jstr get-mzscheme-string)))
+        (let ((str (send Jstr get-racket-string)))
           (make-java-string (string-append text str))))
       (define/public (concat s) (concat-java.lang.String s))
     
@@ -906,12 +906,12 @@
         (set! stack (current-continuation-marks))
         (send this Object-constructor))    
       
-      (public-final set-exception! get-mzscheme-exception)
-      ;Used to interoperate with mzscheme exceptions: set and get the current exception
+      (public-final set-exception! get-racket-exception)
+      ;Used to interoperate with racketg exceptions: set and get the current exception
       (define (set-exception! exn)
         (set! exception exn)
         (set! stack (exn-continuation-marks exn)))
-      (define (get-mzscheme-exception) exception)
+      (define (get-racket-exception) exception)
 
       ;Needs to throw exceptions. Needs to be callable only once per object
       (define/public (initCause-java.lang.Throwable cse)
@@ -939,7 +939,7 @@
             (make-java-string (send this my-name))
             (make-java-string (format "~a: ~a" 
                                       (send this my-name) 
-                                      (send (send this getMessage) get-mzscheme-string)))))
+                                      (send (send this getMessage) get-racket-string)))))
 
       ; -> void
       (define/public (printStackTrace)
@@ -959,16 +959,16 @@
       (define/override (field-names)
         (cond
           [(and (null? cause) 
-                (equal? "" (send message get-mzscheme-string))) null]
+                (equal? "" (send message get-racket-string))) null]
           [(null? cause) (list "message")]
-          [(equal? "" (send message get-mzscheme-string)) (list "cause")]
+          [(equal? "" (send message get-racket-string)) (list "cause")]
           [else (list "message" "cause")]))
       (define/override (field-values)
         (cond
           [(and (null? cause)
-                (equal? "" (send message get-mzscheme-string))) null]
+                (equal? "" (send message get-racket-string))) null]
           [(null? cause) (list message)]
-          [(equal? "" (send message get-mzscheme-string)) (list cause)]
+          [(equal? "" (send message get-racket-string)) (list cause)]
           [else (list message cause)]))
       
       (super-instantiate ())))
@@ -1041,7 +1041,7 @@
       (set! wrapped w)
       
       (define/public (set-exception! exn) (send wrapped set-exception! exn))
-      (define/public (get-mzscheme-exception) (send wrapped get-mzscheme-exception))
+      (define/public (get-racket-exception) (send wrapped get-racket-exception))
       (define/public (initCause-java.lang.Throwable cse)
         (let ([pb (send this pos-blame*)]
               [nb (send this neg-blame*)]
@@ -1104,7 +1104,7 @@
       (set! wrapped w)
 
       (define/public (set-exception! exn) (send wrapped set-exception! exn))
-      (define/public (get-mzscheme-exception) (send wrapped get-mzscheme-exception))
+      (define/public (get-racket-exception) (send wrapped get-racket-exception))
       (define/public (initCause-java.lang.Throwable . cse)
         (let ([pb (send this pos-blame*)]
               [nb (send this neg-blame*)]
@@ -1132,8 +1132,8 @@
             (send wrapped initCause-java.lang.Throwable 
                   (wrap-convert-assert-Throwable (car cse) pb nb sr cc))
             pb nb sr cc)))
-      (define/public (getMessage) (send (send wrapped getMessage) get-mzscheme-string))
-      (define/public (get-message) (send (send wrapped getMessage) get-mzscheme-string))
+      (define/public (getMessage) (send (send wrapped getMessage) get-racket-string))
+      (define/public (get-message) (send (send wrapped getMessage) get-racket-string))
       (define/public (getCause) 
         (let ([pb (send this pos-blame*)]
               [nb (send this neg-blame*)]
@@ -1146,8 +1146,8 @@
               [sr (send this src*)]
               [cc (send this cc-marks*)])
           (make-object guard-convert-Throwable (send wrapped getCause) pb nb sr cc)))
-      (define/public (getLocalizedMessage) (send (send wrapped getLocalizedMessage) get-mzscheme-string))
-      (define/public (get-localized-message) (send (send wrapped getLocalizedMessage) get-mzscheme-string))
+      (define/public (getLocalizedMessage) (send (send wrapped getLocalizedMessage) get-racket-string))
+      (define/public (get-localized-message) (send (send wrapped getLocalizedMessage) get-racket-string))
       (define/public (setStackTrace-java.lang.StackTraceElement1 elements)
         (send wrapped setStackTrace-java.lang.StackTraceElement1 elements))
       (define/public (set-stack-trace t) 
