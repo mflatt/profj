@@ -229,8 +229,8 @@
   
   ;get-package: definition type-records -> (list string)
   (define (get-package def type-recs)
-    (send type-recs set-location! (def-file def))
-    (send type-recs lookup-path (id-string (def-name def)) (lambda () (error 'internal-error))))
+    (setting-location (type-recs (def-file def))
+      (send type-recs lookup-path (id-string (def-name def)) (lambda () (error 'internal-error)))))
   
   ;find-dependent-defs: (list defs) -> (list (list defs))
   (define (find-dependent-defs defs type-recs)
@@ -291,8 +291,9 @@
       (module-name (make-composite-name (car sorted-d-list))))
     (module-require 
      (if (to-file) 
-         (let ((location (build-path (begin (send type-recs set-location! (def-file (car defs)))
-                                            (send type-recs get-compilation-location) "compiled")
+         (let ((location (build-path (setting-location (type-recs (def-file (car defs)))
+                                         (send type-recs get-compilation-location))
+                                     "compiled"
                                      (string-append (symbol->string (module-name)) "_rkt.zo"))))
            (for-each 
             (lambda (def) (send type-recs set-composite-location (id-string (def-name def)) location))
@@ -381,13 +382,13 @@
     (if (null? reqs)
         null
         (let ((req (car reqs)))
-          (cons (begin (send type-recs set-location! 'interactions)
+          (cons (begin (setting-location (type-recs 'interactions)
                        (send type-recs get-require-syntax
                              (send type-recs require-prefix?
                                    (cons (req-class req) (req-path req))
                                    (lambda () #f))
                              (cons (req-class req) (req-path req))
-                             (lambda () #f)))
+                             (lambda () #f))))
                 (translate-interact-require (cdr reqs) type-recs)))))
   
   ;translate-require: (list (list location req)) type-records -> (list syntax)
@@ -405,17 +406,14 @@
                      (error 'translate-require 
                             (format "Internal Error: (make-req ~a ~a) not found" 
                                     (req-class req) (req-path req))))))
-         (cons (begin (send type-recs set-location! (car (car reqs)))
+         (cons (begin (setting-location (type-recs (car (car reqs)))
                       (send type-recs get-require-syntax 
                             (send type-recs require-prefix? 
-                                  (cons (req-class req) (req-path req)) 
+                                  (cons (req-class req) (req-path req))
                                   err)
                             (cons (req-class req) (req-path req))
-                            err))
+                            err)))
                (translate-require (cdr reqs) type-recs))))))
-
-  (require racket/trace)
-;  (trace translate-require)
   
   ;translate-implements: (list name) -> (list syntax)
   (define (translate-implements imp)
@@ -431,13 +429,14 @@
   
   ;translate-class: class-def type-records boolean int -> (list syntax syntax)
   (define (translate-class class type-recs test? depth)
-    ;Let's grab onto the enclosing class-specific info incase depth > 0
+    ;Let's grab onto the enclosing class-specific info in case depth > 0
     (let ((old-class-name (class-name))
           (old-parent-name (parent-name))
           (old-inner-class (inner-class))
           (old-override-table (class-override-table)))
       (unless (> depth 0)
-        (loc (def-file class)) (send type-recs set-location! (loc)))
+        (loc (def-file class))
+        (send type-recs set-location! (loc)))
       (when (> depth 0) (inner-class #t))
       
       (let*-values (((header) (def-header class))
@@ -970,7 +969,7 @@
          ((int byte short long float double char boolean dynamic void null) value)
          ((string) (if from-dynamic?
                        `(make-java-string ,value)
-                       `(send ,value get-mzscheme-string)))))
+                       `(send ,value get-racket-string)))))
       ((dynamic-val? type) value)
       ((array-type? type) value
        #;(if from-dynamic?
@@ -979,7 +978,7 @@
       ((ref-type? type) 
        (cond 
          ((and (equal? string-type type) from-dynamic?) `(make-java-string ,value))
-         ((equal? string-type type) `(send ,value get-mzscheme-string))
+         ((equal? string-type type) `(send ,value get-racket-string))
          ((member type (list 
                         (make-ref-type "Class" '("java" "lang"))
                         (make-ref-type "PrintStream" '("java" "io"))
@@ -1884,7 +1883,7 @@
     (lambda (expr key src)
       (create-syntax #f `(let*-values (((obj) ,expr)
                                        ((exn) (make-java:exception
-                                               (send (send obj |getMessage|) get-mzscheme-string)
+                                               (send (send obj |getMessage|) get-racket-string)
                                                (current-continuation-marks) obj)))
                                       (send obj set-exception! exn)
                                       (,(create-syntax #f 'raise (build-src key)) exn))
@@ -2182,10 +2181,10 @@
       ((symbol? type)
        (case type
          ((int short long byte float double boolean char dynamic void null) val)
-         ((string String) `(send ,val get-mzscheme-string))))
+         ((string String) `(send ,val get-racket-string))))
       ((ref-type? type)
        (if (equal? type string-type)
-           `(send ,val get-mzscheme-string)
+           `(send ,val get-racket-string)
            (let ((prefix (if (send (types) require-prefix? (cons (ref-type-class/iface type) (ref-type-path type))
                                    (lambda () #f))
                              (apply string-append (map (lambda (s) (string-append s ".")) (ref-type-path type)))
@@ -2334,7 +2333,7 @@
   ;translate-literal: symbol value src -> syntax
   (define (translate-literal type value src)
     (let ((make-string  `(let-values (((temp-obj) (make-object String)))
-                           (send temp-obj make-mzscheme-string ,value)
+                           (send temp-obj make-racket-string ,value)
                            temp-obj))
           (make-image
            (lambda ()
@@ -3325,5 +3324,5 @@
   (define translate-id
     (lambda (id src)
       (create-syntax #f (build-identifier id) (build-src src))))
-  
+
   )
