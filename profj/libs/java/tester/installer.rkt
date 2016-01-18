@@ -7,8 +7,7 @@
 		      (collection-path "profj" "libs" "java" "tester"))])
       (let ([javac
 	     (lambda (file)
-	       (parameterize ([current-load-relative-directory
-			       java.test])
+	       (parameterize ([current-load-relative-directory java.test])
 		 (compile-java 'file
 			       'file
 			       'full

@@ -7,8 +7,7 @@
 		      (collection-path "profj" "libs" "java" "lang"))])
       (let ([javac
 	     (lambda (file)
-	       (parameterize ([current-load-relative-directory
-			       java.lang]
+	       (parameterize ([current-load-relative-directory java.lang]
                               [current-directory java.lang])
 		 (compile-java 'file
 			       'file
