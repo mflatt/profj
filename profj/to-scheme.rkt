@@ -291,9 +291,9 @@
       (module-name (make-composite-name (car sorted-d-list))))
     (module-require 
      (if (to-file) 
-         (let ((location (build-path (setting-location (type-recs (def-file (car defs)))
-                                         (send type-recs get-compilation-location))
-                                     "compiled"
+         (let ((location (build-path (begin (setting-location (type-recs (def-file (car defs)))
+                                                              (send type-recs get-compilation-location))
+                                            "compiled")
                                      (string-append (symbol->string (module-name)) "_rkt.zo"))))
            (for-each 
             (lambda (def) (send type-recs set-composite-location (id-string (def-name def)) location))
