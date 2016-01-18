@@ -63,8 +63,8 @@
                    (exn-message e))))))
            (begin (begin body ...) void-or-true))]))
   
-  (define Posn-x-get (dynamic-require 'htdch/geometry/Posn 'Posn-x-get))
-  (define Posn-y-get (dynamic-require 'htdch/geometry/Posn 'Posn-y-get))
+  (define Posn-x-get (dynamic-require 'profj/htdch/geometry/Posn 'Posn-x-get))
+  (define Posn-y-get (dynamic-require 'profj/htdch/geometry/Posn 'Posn-y-get))
   
   (define (build-posn posnO) (make-posn (Posn-x-get posnO) (Posn-y-get posnO)))
   (define (color->symbol colorO) (string->symbol (to-lower-case (send colorO my-name))))
