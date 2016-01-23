@@ -254,7 +254,14 @@
   
   ;; set-expr-type: exp (U type type/env) -> (U type type/env)
   (define (set-expr-type exp t)
-    (set-expr-types! exp (if (type/env? t) (type/env-t t) t)) t)
+    (set-expr-types! exp (if (type/env? t) (type/env-t t) t))
+    t)
+
+  ;;AML
+  (define (type-from-type-or-type/env type-or-type/env)
+    (if (type/env? type-or-type/env)
+        (type/env-t type-or-type/env)
+        type-or-type/env))
 
   ;lookup-this type-records env -> class-record
   (define (lookup-this type-recs env)
@@ -285,7 +292,7 @@
                           "Internal error: Current def does not have a record entry")))))
       (cond
         ((interface-def? def)
-         (check-interface def package-name (def-level def) type-recs))
+         (check-interface def package-name (def-level def) type-recs empty-env))
         ((class-def? def)
          (check-class def package-name (def-level def) type-recs empty-env))
         ((test-def? def)
@@ -325,13 +332,13 @@
          (check-expr prog env level type-recs c-class #f #t #t #f))
         (else
          (error 'check-interactions "Internal error: check-interactions-types got ~a" prog)))))
-  
+
   ;check-class: class-def (list string) symbol type-records env -> void
   (define (check-class class package-name level type-recs class-env)
     (let* ((old-reqs (send type-recs get-class-reqs))
-          (old-update (update-class-with-inner))
-          (name (id-string (def-name class)))
-          (rec (send type-recs get-class-record (cons name package-name))))
+           (old-update (update-class-with-inner))
+           (name (id-string (def-name class)))
+           (rec (send type-recs get-class-record (cons name package-name))))
       (update-class-with-inner (lambda (inner)
                                  (let ((name (id-string (def-name inner))))
                                    (set-def-members! class (cons inner (def-members class)))
@@ -340,7 +347,6 @@
                                                                                       (map modifier-kind (header-modifiers (def-header inner)))
                                                                                       (class-def? inner)) (class-record-inners rec))))))
       (send type-recs set-class-reqs (def-uses class))
-      
       (send type-recs add-req (make-req "String" '("java" "lang")))
       (send type-recs add-req (make-req "Object" '("java" "lang")))
       
@@ -373,7 +379,7 @@
     (check-class test package-name level type-recs env))
 
   ;check-interface: interface-def (list string) symbol type-recs -> void
-  (define (check-interface iface p-name level type-recs)
+  (define (check-interface iface p-name level type-recs env)
     (let ((old-reqs (send type-recs get-class-reqs))
           (old-update (update-class-with-inner))
           (rec (send type-recs get-class-record (cons (id-string (def-name iface)) p-name))))
@@ -392,7 +398,7 @@
       (send type-recs add-req (make-req "String" '("java" "lang")))
       (send type-recs add-req (make-req "Object" '("java" "lang")))
       
-      (check-members (def-members iface) empty-env level type-recs 
+      (check-members (def-members iface) env level type-recs 
                      (cons (id-string (def-name iface)) p-name) #t #f (def-kind iface) #f)
       (set-def-uses! iface (send type-recs get-class-reqs))
       (update-class-with-inner old-update)
@@ -416,7 +422,7 @@
                   (set-id-string! (header-id (def-header def)) unique-name))
                 ((update-class-with-inner) def)))))
       (if (interface-def? def)
-          (check-interface def p-name level type-recs)
+          (check-interface def p-name level type-recs env)
           (check-class def p-name level type-recs (add-var-to-env "encl-this-1" this-type final-parm inner-env)))
         ;; Propagate uses in internal defn to enclosing defn:
       (for-each (lambda (use)
@@ -450,6 +456,13 @@
   (define (check-members members env level type-recs c-class iface? abst-class? class-kind extend-src)
     (let* ((class-record (lookup-this type-recs env))
            (fields (class-record-fields class-record))
+           ;;AML[
+           (ifaces-fields (apply append
+                                 (map (lambda (iface)
+                                        (class-record-fields (send type-recs get-class-record iface)))
+                                      (class-record-ifaces class-record))))
+           ;(fields (append ifaces-fields fields))
+           ;;]AML
            (field-env (create-field-env fields env (car c-class)))
            (base-fields (create-field-env (filter (lambda (field)
                                                     (not (equal? (field-record-class field) c-class)))
@@ -1093,7 +1106,9 @@
                              (expr-src (synchronized-expr statement)))
          (check-s-no-change (synchronized-stmt statement)))
         ((statement-expression? statement)
-         (check-e-no-change statement)))))
+         (check-e-no-change statement))
+        (else
+         (error "Unhandled clause" statement)))))
   
   ;check-cond: symbol -> (type src -> void)
   (define (check-cond kind)
@@ -1243,18 +1258,23 @@
   ;Skipping proper checks of the statements + proper checking that constants aren't repeated
   ;check-switch: type src (list caseS) bool env (expression -> type) (statement env bool bool -> void) -> void
   (define (check-switch expr-type expr-src cases in-loop? env check-e check-s)
-    (error 'internal-error "check-switch: Switch statements are not correctly implemented")
-    (when (or (eq? expr-type 'long)
-              (not (prim-integral-type? expr-type)))
-      (switch-error 'switch-type 'switch expr-type #f expr-src))
+    ;;AML REMOVED FOR NOW(error 'internal-error "check-switch: Switch statements are not correctly implemented")
+    (let ((expr-type (type-from-type-or-type/env expr-type))) ;;AML
+      (when (or (eq? expr-type 'long)
+                (not (prim-integral-type? expr-type)))
+        (switch-error 'switch-type 'switch expr-type #f expr-src)))
     (for-each (lambda (case)
-                (let* ((constant (caseS-constant case))
-                       (cons-type (unless (eq? 'default constant) (check-e constant))))
-                  (if (or (eq? 'default constant)
-                          (type=? cons-type expr-type))
-                      void
-                      (switch-error 'incompat 'case cons-type expr-type (expr-src constant)))))
-              cases))
+                (let ((constant (caseS-constant case)))
+                  (unless (eq? 'default constant)
+                    (let ((const-type (check-e constant)))
+                      (unless (type=? (type-from-type-or-type/env const-type)
+                                      (type-from-type-or-type/env expr-type))
+                        (switch-error 'incompat 'case const-type expr-type expr-src))))
+                  (for-each (lambda (stmt)
+                              (set! env (type/env-e (check-s stmt env in-loop? #t))))
+                            (caseS-body case))))
+              cases)
+   (make-type/env 'void env))
   
   ;check-block: (list (U stmt field)) env (stmt env -> type/env) (expr env -> type/env) symbol 
   ;             (list string) type-records -> type/env
@@ -1267,7 +1287,7 @@
                (check-local-var (car stmts) block-env check-e level c-class type-recs)))
         (else
          (loop (cdr stmts) (type/env-e (check-s (car stmts) block-env)))))))
-      
+
   ;check-local-inner: def env symbol (list string) type-records -> type/env
   (define (check-local-inner def env level c-class type-recs)
     ;((update-class-with-inner) def)
@@ -1821,7 +1841,7 @@
               (make-type/env record (if obj (type/env-e obj-type/env) env)))
              (else 
               (error 'internal-error "field-access given unknown form of field information")))))
-        ((local-access? acc) 
+        ((local-access? acc)
          (let ((var (lookup-var-in-env (id-string (local-access-name acc)) env)))
            (unless (properties-usable? (var-type-properties var))
              (unusable-var-error (string->symbol (var-type-var var)) (id-src (local-access-name acc))))
@@ -1925,7 +1945,7 @@
                          (variable-not-found-error 'not-found (car acc) (id-src (car acc))))))))))
            (set-access-name! exp new-acc)
            (check-e exp env))))))
-  
+      
   ;package-members? (list string) (list string) type-records -> bool
   (define (package-members? class1 class2 type-recs)
     (cond
@@ -1997,7 +2017,7 @@
                (find-static (append string-path (list (id-string (car remainder))))
                             (cdr remainder)))))
       (else (list #f (apply build-path (append string-path (list (id-string (car remainder))))))))))
-  
+
   ;find-directory: (list string) -> (U string bool)
   (define (find-directory path)
     (if (null? path)
@@ -2037,7 +2057,7 @@
         (else 
          (let ((arg/env (check-e (car args) env)))
            (loop (cdr args) (cons (type/env-t arg/env) arg-types) (type/env-e arg/env)))))))
-    
+
   ;; 15.12
   ;check-call: exp (list exp) (expr env ->type/env) (list string) symbol env type-records bool bool-> type/env
   (define (check-call call arg-exps check-sub c-class level env type-recs ctor? static? interact?)
@@ -2156,18 +2176,34 @@
                                                    type-recs level src))
                                             type-recs) type-recs))
                       (else (prim-call-error call-exp name src level)))))
-                 (else 
+                 (else
                   (if (and (eq? level 'beginner) (not interact?))
                       (beginner-method-access-error name (id-src name))
-                      (let ((rec (if static? (send type-recs get-class-record c-class) this)))
+                      ;;AML
+                      #;(let ((rec (if static? (send type-recs get-class-record c-class) this)))
                         (cond 
                           ((and (dynamic?) (lookup-var-in-env name-string env)) =>
                            (lambda (var-type)
                              (if (eq? 'dynamic (var-type-type var-type))
                                  (list (make-method-contract (string-append name-string "~f") #f #f #f))
                                  null)))
-                          ((null? rec) null)
-                          (else (get-method-records name-string rec type-recs)))))))))))
+                          ((null? rec)
+                           null)
+                          (else
+                           (get-method-records name-string rec type-recs))))
+                      (let ((rec (if static? (send type-recs get-class-record c-class) this)))
+                        (let ((methods
+                               (if (null? rec) null (get-method-records name-string rec type-recs))))
+                          (if (null? methods)
+                              (cond ((and (dynamic?) (lookup-var-in-env name-string env))
+                                     =>
+                                     (lambda (var-type)
+                                       (if (eq? 'dynamic (var-type-type var-type))
+                                           (list (make-method-contract (string-append name-string "~f") #f #f #f))
+                                           null)))
+                                    (else
+                                     null))
+                              methods))))))))))
       
       (when (and (inspect-test?) (null? methods)
                  (or (equal? name-string "old")
@@ -2311,7 +2347,7 @@
           ((method-contract? method-record)
            (set-call-method-record! call method-record)
            (make-type/env (method-contract-return method-record) (cadr args/env)))))))
-    
+  
   ;close-to-keyword: string -> bool
   (define (close-to-keyword? str)
     (let ((s (string-downcase str)))
@@ -2732,7 +2768,7 @@
                 (local-access? (access-name l-exp)))
            (add-set-to-env (id-string (local-access-name (access-name l-exp)))
                            (type/env-e rtype/env))
-           (type/env-e rtype/env)))))      
+           (type/env-e rtype/env)))))
   
   ;check-final: expression bool bool string -> void
   (define (check-final expr ctor? static-init? c-class env)
@@ -3934,5 +3970,4 @@
   (define check-location (make-parameter #f))
   
   (define raise-error (make-error-pass check-location))
-      
   )
