@@ -121,11 +121,9 @@
       ((and (ref-type? t1) (ref-type? t2))
        (and (string=? (ref-type-class/iface t1) (ref-type-class/iface t2))
             (= (length (ref-type-path t1)) (length (ref-type-path t2)))
-            (andmap
-             (lambda (x y)
-               (string=? x y))
-             (ref-type-path t1)
-             (ref-type-path t2))))
+            (andmap string=?
+                    (ref-type-path t1)
+                    (ref-type-path t2))))
       ((and (array-type? t1) (array-type? t2))
        (and (= (array-type-dim t1) (array-type-dim t2))
             (type=? (array-type-type t1) (array-type-type t2))))
@@ -134,14 +132,15 @@
                (and (eq? t2 'null) (ref-type? t1)))
            (and (eq? t1 'string) (type=? t2 string-type))
            (and (eq? t2 'string) (type=? t1 string-type))))
-      (else #f)))                     
+      (else #f)))
   
   ;; 5.1.2
   ;; widening-prim-conversion: symbol-type symbol-type -> boolean
   (define (widening-prim-conversion to from)
     (cond
       ((symbol=? to from) #t)
-      ((symbol=? to 'char) #f)
+      ((symbol=? to 'char)
+       (memq from `(byte short int))) ;;AML This is not widening, but is accepted (kind of, I'm not checking the value)
       ((symbol=? 'short to)
        (symbol=? 'byte from))
       ((symbol=? 'int to)
