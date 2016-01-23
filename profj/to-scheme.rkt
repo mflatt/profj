@@ -5,6 +5,7 @@
            "graph-scc.rkt"
            "parameters.rkt"
            racket/class
+           racket/list
            (prefix-in int-set: data/integer-set)
            )
   
@@ -1444,7 +1445,7 @@
         (list `(,provides
                 (define ,syntax-name (,interface ,(translate-parents (header-extends header))
                                                  ,@(make-iface-method-names (members-method members))))
-                ,@(create-static-fields static-field-names (members-field members))
+                ,@(reverse (create-static-fields static-field-names (members-field members)))
                 ,@(append (generate-wrappers (class-name)
                                              "Object"
                                              (append
@@ -2039,7 +2040,8 @@
         (member `("java" "lang" "RuntimeException") (class-record-parents class-record)))))
   
   ;translate-switch: syntax (list CaseStatements) src type-records -> syntax
-  (define translate-switch
+  ;;AML
+  #;(define translate-switch
     (lambda (expr cases src type-recs)
       (make-syntax #f
                    `(case ,expr
@@ -2052,6 +2054,27 @@
                                       ,(translate-block (caseS-body case) (caseS-src case) type-recs)))))
                              cases))
                    (build-src src))))
+  (define translate-switch
+    (lambda (expr cases src type-recs)
+      (make-syntax #f
+                   (let ((var (gensym "switch")))
+                     `(let/ec loop-k
+                        (let ((,var ,expr))
+                          (cond 
+                            ,@(let loop ((cases cases))
+                                (if (null? cases)
+                                    null
+                                    (let ((case (car cases))
+                                          (stmts (takef (apply append (map caseS-body cases)) (compose not break?))))
+                                      (cons `(,(if (eq? (caseS-constant case) 'default)
+                                                   `else
+                                                   `(eqv? ,var ,(translate-expression (caseS-constant case))))
+                                              ,(if (null? stmts)
+                                                  `(void)
+                                                  (translate-block stmts (caseS-src case) type-recs)))
+                                            (loop (cdr cases))))))))))
+                   (build-src src))))
+
   
   ;translate-block: (list (U Statement (U var-decl var-init))) src type-recs -> syntax
   (define translate-block
@@ -2181,7 +2204,9 @@
       ((symbol? type)
        (case type
          ((int short long byte float double boolean char dynamic void null) val)
-         ((string String) `(send ,val get-racket-string))))
+         ((string String) `(send ,val get-racket-string))
+         (else ;;AML
+          (error (format "Can't handle ~A" type)))))
       ((ref-type? type)
        (if (equal? type string-type)
            `(send ,val get-racket-string)
@@ -2578,7 +2603,9 @@
                                                             ,access-syntax (quote ,(string->symbol (class-name))) '||)
                                                (build-src field-src))
                                   (dynamic-val-type type)) (build-src field-src)))
-                   get-syntax))))))))
+                   get-syntax))))))
+      (else
+       (error "Unhandle case" name))))
   
   ;translate-special-name: string src -> syntax
   (define (translate-special-name name src)
@@ -3016,7 +3043,8 @@
                   ((var-access-static? vaccess)
                    (set-h (build-identifier (build-static-name (build-var-name field)
                                                                (build-identifier (var-access-class vaccess))))))
-                  ((not obj) (set-h (translate-id (build-var-name field) field-src)))
+                  ((not obj)
+                   (set-h (translate-id (build-var-name field) field-src)))
                   (else
                    (let ((setter (if (and (var-access-final? vaccess)
                                           (not (eq? 'private (var-access-access vaccess))))
@@ -3035,7 +3063,11 @@
                                                  ((,new-val) ,(expression `(,getter ,name))))
                                                 (,setter ,name ,new-val)
                                                 ,new-val)
-                                  src-h))))))))))))
+                                  src-h))))))
+             (else
+              (error (format "The assigned name '~A' is neither a local name nor a field name" name))))))
+        (else
+         (error (format "The assigned '~A' is neither for an array nor a name" name))))))
   
   ;translate-array-mutation: array-access (syntax -> (list symbol syntax syntax)) expression src -> syntax
   (define (translate-array-mutation array expression expr src)
@@ -3324,5 +3356,4 @@
   (define translate-id
     (lambda (id src)
       (create-syntax #f (build-identifier id) (build-src src))))
-
   )
