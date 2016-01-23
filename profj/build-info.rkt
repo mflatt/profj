@@ -336,10 +336,10 @@
   ;Determines if the given class is a core class not written in Java
   (define (core? class)
     (member class `(("Object" "java" "lang")
-                   ("String" "java" "lang")
-                   ("Throwable" "java" "lang")
-                   ("Comparable" "java" "lang")
-                   ("Serializable" "java" "io"))))
+                    ("String" "java" "lang")
+                    ("Throwable" "java" "lang")
+                    ("Comparable" "java" "lang")
+                    ("Serializable" "java" "io"))))
   
   ;check-file-exists?: string path box -> bool
   ;side-effect: modifies contents of box
@@ -414,13 +414,15 @@
       ((null? path) (make-dir-path (build-path 'same) #f))
       ((and (dynamic?) (equal? (car path) "scheme"))
        (cond
-         ((null? (cdr path)) (make-dir-path (build-path 'same) #t))
+         ((null? (cdr path))
+          (make-dir-path (build-path 'same) #t))
          ((not (equal? (cadr path) "lib")) 
           (let ((dir (find-directory (cdr path) fail)))
             (make-dir-path (dir-path-path dir) #t)))
          ((and (equal? (cadr path) "lib") (not (null? (cddr path))))
           (make-dir-path (apply collection-path (cddr path)) #t))
-         (else (make-dir-path (build-path "racket") #t))))
+         (else
+          (make-dir-path (build-path "racket") #t))))
       (else
        (when (null? (classpath)) (classpath (get-classpath)))
        (let-values (((search)
