@@ -408,7 +408,7 @@
        [(ExtendsInterfaces COMMA InterfaceType) (cons $3 $1)])
 
       (InterfaceBody
-       [(O_BRACE InterfaceMemberDeclarations C_BRACE) $2])
+       [(O_BRACE InterfaceMemberDeclarations C_BRACE) (reverse $2)])
       
       (InterfaceMemberDeclarations
        [() null]
