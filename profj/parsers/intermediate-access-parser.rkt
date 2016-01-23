@@ -326,7 +326,7 @@
                                 (build-src 1)
                                 (build-src 4)
                                 (file-path)
-                                'intermedaite
+                                'intermediate
                                 null 'top null)]
        [(interface IDENTIFIER InterfaceBody)
 	(make-interface-def (make-header (make-id $2 (build-src 2 2))(list (make-modifier 'public #f))
@@ -335,7 +335,7 @@
                                 (build-src 1)
                                 (build-src 3)
                                 (file-path)
-                                'intermdediate
+                                'intermediate
                                 null 'top null)])
       
       (ExtendsInterfaces
