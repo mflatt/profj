@@ -384,7 +384,7 @@
           (super-new)))
       
       ;repl-submit: text int -> bool
-      ;Determines if the reple should submit or not
+      ;Determines if the repl should submit or not
       (define (repl-submit text prompt-position)
         (let ((is-if? #f)
               (is-string? #f)
@@ -794,7 +794,7 @@
                              [examples (if (testcase-ext?)
                                            (list (send execute-types get-test-classes) null)
                                            (find-examples compilation-units))])
-                          #;(printf "ProfJ compilation complete~n")
+                        #;(printf "ProfJ compilation complete~n")
                         #;(printf "compilation units- ~a~n" (map syntax->datum 
                                                                (apply append (map compilation-unit-code compilation-units))))
                         (set! compiled? #t)
