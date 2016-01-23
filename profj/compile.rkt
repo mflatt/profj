@@ -195,7 +195,7 @@
       (build-info ast level type-recs #f)
       (unless (null? (check-list))
         (check-defs (car (check-list)) level type-recs))
-      (remove-from-packages ast type-recs)))             
+      (remove-from-packages ast type-recs)))
   
   ;compile-java-internal: port location type-records bool level-> (list compilation-unit)
   (define (compile-java-internal port location type-recs file? level)
