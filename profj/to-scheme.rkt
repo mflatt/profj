@@ -289,7 +289,10 @@
   ;translate-defs: (list def) type-records -> (values (list syntax) (list reqs))
   (define (translate-defs defs type-recs)
     (let ((sorted-d-list (sort (map (compose id-string def-name) defs) string<?)))
-      (module-name (make-composite-name (car sorted-d-list))))
+      (let ((name (if (> (length defs) 1)
+                      (make-composite-name (car sorted-d-list))
+                      (build-identifier (car sorted-d-list)))))
+        (module-name name)))
     (module-require 
      (if (to-file) 
          (let ((location (build-path (begin (setting-location (type-recs (def-file (car defs)))
