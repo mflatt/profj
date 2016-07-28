@@ -1,7 +1,7 @@
 package draw;
 
-import geometry.*;
-import colors.*;
+import geometry.Posn;
+import colors.IColor;
         
 public class Canvas {
     private int width = 0; 

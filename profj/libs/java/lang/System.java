@@ -6,6 +6,6 @@ public final class System {
 
   public static native void gc();
 
-  public static native int identityHashCode( Object x);
+  public static native int identityHashCode(Object x);
  
 }
