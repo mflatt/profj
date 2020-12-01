@@ -9,9 +9,7 @@
 	   string-constants)
   (require "parameters.ss" 
            "parsers/lexer.ss"
-           (lib "test-engine/test-engine.rkt")
            "java-tests.scm"
-           (lib "test-engine/test-coverage.scm")
            (except-in "ast.ss" for)
            "display-java.ss")
 
@@ -820,9 +818,6 @@
                                       (map (lambda (c)
                                              (list c ([current-eval] (string->symbol c)) c))
                                            (list ,@(car tests))))
-                                (when ,(coverage?)
-                                  (send (send ,test-engine-obj get-info) add-analysis 
-                                        ,(make-object coverage-analysis%)))
                                 (send ,test-engine-obj refine-display-class 
                                       ,(cond
                                          [(and (testcase-ext?) (coverage?)) java-test-coverage-graphics%]
@@ -1059,8 +1054,8 @@
                  (lambda ()
                    (test-ext? (profj-settings-allow-check? settings))
                    (testcase-ext? (profj-settings-allow-test? settings))
-                   (test-execute (get-preference 'tests:enable? (lambda () #t)))
-                   (coverage? (and (test-execute) (profj-settings-coverage? settings)))
+                   ;(test-execute (get-preference 'tests:enable? (lambda () #t)))
+                   ;(coverage? (and (test-execute) (profj-settings-coverage? settings)))
                    (error-display-handler 
                     (drscheme:debug:make-debug-error-display-handler (error-display-handler)))
                    #;(let ((old-current-eval (drscheme:debug:make-debug-eval-handler (current-eval))))
