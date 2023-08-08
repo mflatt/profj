@@ -1,5 +1,6 @@
 #lang racket/base
-(require (for-syntax racket/base))
+(require (for-syntax racket/base)
+         parser-tools/lex)
 
 (provide generate-reader)
 
@@ -26,7 +27,13 @@
                                   [(literal) 'constant]
                                   [(identifier) 'symbol]
                                   [else category]))
-                              (values lexeme revised-category paren start end))]
+                              (define (position-offset* p)
+                                (if (position? p)
+                                    (position-offset p)
+                                    p))
+                              (values lexeme revised-category paren
+                                      (position-offset* start)
+                                      (position-offset* end)))]
              [else (get-default mode default)]))
          
          (require racket/class
